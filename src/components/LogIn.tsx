@@ -30,7 +30,7 @@ class LogIn extends React.Component<ILogInProps, {}> {
             <Modal style={styles.modal}>
                 <p style={styles.p}>
                     <label style={styles.label} htmlFor="userLogin">Username</label>
-                    <input style={styles.input} type="text" name="userLogin" value={this.props.userLogin} onChange={this.InputChangedHandler} />
+                    <input style={styles.input} type="text" name="userLogin" value={this.props.userLogin} onChange={this.InputChangedHandler}/>
                 </p>
                 <p>
                     <label style={styles.label} htmlFor="passwordLogin">Password</label>
@@ -75,8 +75,9 @@ const styles: { [key: string]: React.CSSProperties } = {
         borderRadius: '5px',
     },
     button: {
-        background: '#5077bb',
-        color: 'white',
+        border: '1px solid rgb(94, 151, 238)',
+        background: '#b8e0ee',
+        color: '#00779e',
         fontSize: '20px',
         cursor: 'pointer',
         borderRadius: '5px'

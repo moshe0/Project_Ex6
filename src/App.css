@@ -1,88 +1,121 @@
 html, body, .bodyClass, #root {
-  margin: 0;
-  padding: 0;
-  width: 100%;
-  height: 100%;
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
 }
 
 .MainClass{
-  border-bottom: 1px solid black;
-  height: 100%;
-  display: flex;
-  flex-direction: row;
+    border-bottom: 1px solid black;
+    height: 100%;
+    display: flex;
+    flex-direction: row;
 }
 
 .Header {
-  border-bottom: 1px solid black;
-  background: #075E54;
-  color: white;
-  font-size: 25px;
-  height: 50px;
-  direction: rtl;
-  width: 100%;
-  overflow: hidden;
-  float: right;
+    border-bottom: 1px solid black;
+    background: #075E54;
+    color: white;
+    font-size: 25px;
+    height: 50px;
+    direction: rtl;
+    width: 100%;
+    overflow: hidden;
+    float: right;
 }
 
 .left {
-  width: 25%;
-  border-right: 1px solid black;
-  background-color: #84a386;
+    width: 25%;
+    border-right: 1px solid black;
+    background-color: #84a386;
 }
 
 .right {
-  width: 75%;
-  display: flex;
-  flex-direction: column;
-  background: url("Images/whatsapp.jpg");
+    width: 75%;
+    display: flex;
+    flex-direction: column;
+    background: url("Images/whatsapp.jpg");
 }
 
 
 /************************************    SendingMessage   **************************************/
 .SendingMessage{
-  display: flex;
-  flex-direction: row;
-  height: 50px;
+    display: flex;
+    flex-direction: row;
+    height: 50px;
 }
+
+
+input, button{
+    padding: 3px 7px 3px 7px;
+}
+
+button{
+    margin-right: 3px;
+}
+
+input, textarea, select, button {
+    -webkit-transition: all 0.30s ease-in-out;
+    -moz-transition: all 0.30s ease-in-out;
+    -o-transition: all 0.30s ease-in-out;
+    outline: none;
+    border: 1px solid #DDDDDD;
+}
+
+input:focus, textarea:focus, select:focus, button:focus {
+    box-shadow: 0 0 5px rgb(94, 151, 238);
+    border: 1px solid rgb(94, 151, 238);
+}
+
 
 
 .MessageInput{
-  flex-grow: 1;
-  font-size: 23px;
-  border-bottom-left-radius: 15px;
-  border-top-left-radius: 15px;
-  margin: 5px 0px 5px 5px;
-  padding: 5px 5px 5px 12px;
-
+    flex-grow: 1;
+    font-size: 23px;
+    border-bottom-left-radius: 15px;
+    border-top-left-radius: 15px;
+    margin: 5px 0 5px 5px;
+    padding: 5px 5px 5px 12px;
+    border: none;
 }
 
 .buttonActive{
-  margin: 5px 5px 5px 0px;
-  border-bottom-right-radius: 15px;
-  border-top-right-radius: 15px;
-  background-color: #078278;
-  font-size: 25px;
-  min-width: 100px;
-  color: white;
-  border-color: white;
-}
-
-.buttonDisabled{
-    margin: 5px 5px 5px 0px;
+    border: none;
+    margin: 5px 5px 5px 0;
     border-bottom-right-radius: 15px;
     border-top-right-radius: 15px;
-    background-color: gainsboro;
+    background-color: #078278;
     font-size: 25px;
-    min-width: 100px;
+    min-width: 75px;
     color: white;
     border-color: white;
 }
 
+
+.buttonDisabled{
+    border: none;
+    margin: 5px 5px 5px 0;
+    border-bottom-right-radius: 15px;
+    border-top-right-radius: 15px;
+    background-color: gainsboro;
+    font-size: 25px;
+    min-width: 75px;
+    color: white;
+    border-color: white;
+}
+
+.SendingImg{
+    background: url("Images/sendingMessage.png");
+    width: 24px;
+    height: 24px;
+    margin-left: 18px;
+}
+
 .buttonActive:hover {
-  background-color: #075E54;
+    background-color: #075E54;
 }
 /*************************************************************************************/
 
@@ -96,41 +129,41 @@ html, body, .bodyClass, #root {
 
 /**************************** MessageHistory *******************************/
 .content {
-  height: 100%;
-  outline: none;
-  overflow-y: scroll;
+    height: 100%;
+    outline: none;
+    overflow-y: scroll;
 }
 
 .message {
-  width:100%;
-  overflow: hidden;
+    width:100%;
+    overflow: hidden;
 }
 
 .OtherMessage{
-  float: right;
-  background: #F7F7F7;
-  border-bottom-left-radius: 15px;
-  border-bottom-right-radius: 15px;
-  border-top-left-radius: 15px;
+    float: right;
+    background: #F7F7F7;
+    border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
+    border-bottom-left-radius: 15px;
 }
 
 .MineMessage{
-  background: palegreen;
-  border-bottom-left-radius: 15px;
-  border-bottom-right-radius: 15px;
-  border-top-right-radius: 15px;
+    background: palegreen;
+    border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
+    border-bottom-right-radius: 15px;
 }
 
 .MessageHistory{
-  margin: 5px;
-  padding: 5px;
-  font-size: 25px;
-  width: fit-content;
+    margin: 5px;
+    padding: 5px;
+    font-size: 25px;
+    width: fit-content;
 }
 
 .MessageTime{
-  font-size: 10px;
-  color: gray;
+    font-size: 10px;
+    color: gray;
 }
 
 .Date{
@@ -141,7 +174,7 @@ html, body, .bodyClass, #root {
     margin-right: 40%;
     border-radius: 5px;
     margin-top: 5px;
-    margin-buttom: 5px;
+    margin-bottom: 5px;
 }
 
 .MessageUserSending{
@@ -161,25 +194,25 @@ html, body, .bodyClass, #root {
 
 /************************   Header   **********************************/
 .LoginImage {
-  background: url("Images/LoginUser/userLogin.png");
-  width: 32px;
-  height: 32px;
-  margin: 7px;
-  float: right;
-  cursor: pointer;
+    background: url("Images/LoginUser/userLogin.png");
+    width: 32px;
+    height: 32px;
+    margin: 7px;
+    float: right;
+    cursor: pointer;
 }
 
 div.LoginImage:hover{
-  background: url("Images/LoginUser/userLoginH.png");
+    background: url("Images/LoginUser/userLoginH.png");
 }
 
 div.LoginImage:active{
-  background: url("Images/LoginUser/userLoginP.png");
+    background: url("Images/LoginUser/userLoginP.png");
 }
 
 .LoginStatus{
-  padding: 15px;
-  font-size: 15px;
+    padding: 15px;
+    font-size: 15px;
 }
 /************************************************************************/
 

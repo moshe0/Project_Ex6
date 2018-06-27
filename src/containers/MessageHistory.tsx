@@ -20,7 +20,9 @@ class MessageHistory extends React.Component <{}, {Messages}>{
 
 
         this.stateStore.subscribe(async()=>{
-            let index = InitTree.GetSelectedChildrenNames().find(item => item === StateStore.getInstance().get('currentUser').Name);
+            let index;
+            if(!!StateStore.getInstance().get('currentUser'))
+                index = InitTree.GetSelectedChildrenNames().find(item => item === StateStore.getInstance().get('currentUser').Name);
 
             if(!! this.stateStore.get('currentUser') && !! this.stateStore.get('Receiver') && !!index) {
                 const resMessages = await appService.GetMessages(this.stateStore.get('currentUser'), this.stateStore.get('Receiver'));

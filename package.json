@@ -15,7 +15,6 @@
     "react-router-dom": "^4.2.2",
     "react-scripts-ts": "2.16.0",
     "reactstrap": "^6.1.0",
-    "shared-models": "file:ModelsShared",
     "socket.io": "^2.1.1"
   },
   "scripts": {

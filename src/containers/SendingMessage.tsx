@@ -48,13 +48,18 @@ class SendingMessage extends React.Component <{}, ISendingMessageState> {
 
     public render() {
         let inputDisabled = false;
+        let placeholder = 'Type Message...';
         let buttonDisabled = false;
-        if(!this.stateStore.get('currentUser') || InitTree.SelectedType() === 'Not selected')
+        if(!this.stateStore.get('currentUser') || InitTree.SelectedType() === 'Not selected') {
+            placeholder = '';
             inputDisabled = true;
+        }
         else if(InitTree.SelectedType() !== 'User without parent' && InitTree.SelectedType() !== 'User in a parent'){
             let index = InitTree.GetSelectedChildrenNames().find(item => item === StateStore.getInstance().get('currentUser').Name);
-            if (!index)
+            if (!index) {
+                placeholder = '';
                 inputDisabled = true;
+            }
         }
 
         if(this.state.inputVal.trim() === '' || inputDisabled)
@@ -64,8 +69,10 @@ class SendingMessage extends React.Component <{}, ISendingMessageState> {
 
         return (
             <div className={'SendingMessage'}>
-                <input onKeyUp={this.EnterKeyPress} type='text' className='MessageInput' disabled={inputDisabled} onChange={this.handleInputChange} value={this.state.inputVal} placeholder={'Type Message...'}/>
-                <button onClick={this.handleButtonClick} className={btnClass} type='button' disabled={buttonDisabled}> > </button>
+                <input onKeyUp={this.EnterKeyPress} type='text' className='MessageInput' disabled={inputDisabled} onChange={this.handleInputChange} value={this.state.inputVal} placeholder={placeholder}/>
+                <button onClick={this.handleButtonClick} className={btnClass} type='button' disabled={buttonDisabled}>
+                    <div className="SendingImg"/>
+                </button>
             </div>
         );
     }
