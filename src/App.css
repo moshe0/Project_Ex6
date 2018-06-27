@@ -1,0 +1,319 @@
+html, body, .bodyClass, #root {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+}
+
+.MainClass{
+  border-bottom: 1px solid black;
+  height: 100%;
+  display: flex;
+  flex-direction: row;
+}
+
+.Header {
+  border-bottom: 1px solid black;
+  background: #075E54;
+  color: white;
+  font-size: 25px;
+  height: 50px;
+  direction: rtl;
+  width: 100%;
+  overflow: hidden;
+  float: right;
+}
+
+.left {
+  width: 25%;
+  border-right: 1px solid black;
+  background-color: #84a386;
+}
+
+.right {
+  width: 75%;
+  display: flex;
+  flex-direction: column;
+  background: url("Images/whatsapp.jpg");
+}
+
+
+/************************************    SendingMessage   **************************************/
+.SendingMessage{
+  display: flex;
+  flex-direction: row;
+  height: 50px;
+}
+
+
+.MessageInput{
+  flex-grow: 1;
+  font-size: 23px;
+  border-bottom-left-radius: 15px;
+  border-top-left-radius: 15px;
+  margin: 5px 0px 5px 5px;
+  padding: 5px 5px 5px 12px;
+
+}
+
+.buttonActive{
+  margin: 5px 5px 5px 0px;
+  border-bottom-right-radius: 15px;
+  border-top-right-radius: 15px;
+  background-color: #078278;
+  font-size: 25px;
+  min-width: 100px;
+  color: white;
+  border-color: white;
+}
+
+.buttonDisabled{
+    margin: 5px 5px 5px 0px;
+    border-bottom-right-radius: 15px;
+    border-top-right-radius: 15px;
+    background-color: gainsboro;
+    font-size: 25px;
+    min-width: 100px;
+    color: white;
+    border-color: white;
+}
+
+.buttonActive:hover {
+  background-color: #075E54;
+}
+/*************************************************************************************/
+
+
+
+
+
+
+
+
+
+/**************************** MessageHistory *******************************/
+.content {
+  height: 100%;
+  outline: none;
+  overflow-y: scroll;
+}
+
+.message {
+  width:100%;
+  overflow: hidden;
+}
+
+.OtherMessage{
+  float: right;
+  background: #F7F7F7;
+  border-bottom-left-radius: 15px;
+  border-bottom-right-radius: 15px;
+  border-top-left-radius: 15px;
+}
+
+.MineMessage{
+  background: palegreen;
+  border-bottom-left-radius: 15px;
+  border-bottom-right-radius: 15px;
+  border-top-right-radius: 15px;
+}
+
+.MessageHistory{
+  margin: 5px;
+  padding: 5px;
+  font-size: 25px;
+  width: fit-content;
+}
+
+.MessageTime{
+  font-size: 10px;
+  color: gray;
+}
+
+.Date{
+    text-align: center;
+    background-color: #B2DBE1;
+    padding: 5px;
+    margin-left: 40%;
+    margin-right: 40%;
+    border-radius: 5px;
+    margin-top: 5px;
+    margin-buttom: 5px;
+}
+
+.MessageUserSending{
+    font-size: 13px;
+    color: #42a4ff;
+    font-weight: bold;
+    direction: rtl;
+}
+
+/***********************************************************************/
+
+
+
+
+
+
+
+/************************   Header   **********************************/
+.LoginImage {
+  background: url("Images/LoginUser/userLogin.png");
+  width: 32px;
+  height: 32px;
+  margin: 7px;
+  float: right;
+  cursor: pointer;
+}
+
+div.LoginImage:hover{
+  background: url("Images/LoginUser/userLoginH.png");
+}
+
+div.LoginImage:active{
+  background: url("Images/LoginUser/userLoginP.png");
+}
+
+.LoginStatus{
+  padding: 15px;
+  font-size: 15px;
+}
+/************************************************************************/
+
+
+
+
+
+
+
+
+/********************   tree    *****************/
+.tree {
+    padding: 0.5em;
+    margin: 0;
+    list-style: none;
+    outline: none;
+    height: 87.9%;
+    overflow-y: scroll;
+}
+
+.ActionTree{
+    height: 9.3%;
+    vertical-align: bottom;
+    padding-left: 1px;
+    padding-right: 60px;
+    background-color: #617e63;
+}
+
+.group{
+    font-size: 25px;
+}
+
+.user{
+    font-size: 25px;
+}
+
+.inFocus{
+    border: 1px solid black;
+    background: darkgreen;
+}
+
+.hidden{
+    display: none;
+}
+
+li{
+    user-select: none;
+    color: white;
+}
+/***********************************************/
+
+
+
+/**************   Tree Actions   ********************/
+
+.TreeActionsImages{
+    width: 40px;
+    height: 40px;
+    margin: 8px;
+    float: right;
+    cursor: pointer;
+}
+
+.EditImageDisable {
+    background: url("Images/Edit/EditD.png");
+    cursor: default;
+}
+
+.EditImage {
+    background: url("Images/Edit/Edit.png");
+}
+
+div.EditImage:hover{
+    background: url("Images/Edit/EditH.png");
+}
+
+div.EditImage:active{
+    background: url("Images/Edit/EditP.png");
+}
+
+
+.AddImageDisable {
+    background: url("Images/Add/AddD.png");
+    cursor: default;
+}
+
+.AddImage {
+    background: url("Images/Add/Add.png");
+}
+
+div.AddImage:hover{
+    background: url("Images/Add/AddH.png");
+}
+
+div.AddImage:active{
+    background: url("Images/Add/AddP.png");
+}
+
+
+.DelImageDisable {
+    background: url("Images/Del/DelD.png");
+    cursor: default;
+}
+
+.DelImage {
+    background: url("Images/Del/Del.png");
+}
+
+div.DelImage:hover{
+    background: url("Images/Del/DelH.png");
+}
+
+div.DelImage:active{
+    background: url("Images/Del/DelP.png");
+}
+
+
+.FlatteningImageDisable {
+    background: url("Images/Flattening/FlatteningD.png");
+    cursor: default;
+}
+
+.FlatteningImage {
+    background: url("Images/Flattening/Flattening.png");
+}
+
+div.FlatteningImage:hover{
+    background: url("Images/Flattening/FlatteningH.png");
+}
+
+div.FlatteningImage:active{
+    background: url("Images/Flattening/FlatteningP.png");
+}
+
+
+
+/***********************************************/
