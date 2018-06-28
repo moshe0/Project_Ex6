@@ -133,7 +133,7 @@ const styles: { [key: string]: React.CSSProperties } = {
         fontWeight : "bold"
     },
     button: {
-        border: '1px solid rgb(94, 151, 238)',
+        border: '1px solid rgb(0, 119, 158)',
         background: '#b8e0ee',
         color: '#00779e',
         fontSize: '20px',
