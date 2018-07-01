@@ -39,7 +39,7 @@ class App extends React.Component<{}, IAppUserState> {
 
     Login = async () => {
         const LoginUser = await appService.GetSpecificUser(this.state.userLogin, this.state.passwordLogin);
-        if(LoginUser.Id === -1){
+        if(!LoginUser || LoginUser.Id === '-1'){
             this.setState({
                 MessageErr : 'User name or password incorrect!'
             });

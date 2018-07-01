@@ -326,7 +326,7 @@ export class InitTree {
         return names;
     }
 
-    static GetSelectedId(): number {
+    static GetSelectedId(): string {
         let itemFocused = $('.inFocus');
         return itemFocused.data('id');
     }

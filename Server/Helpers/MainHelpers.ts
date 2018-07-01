@@ -47,7 +47,7 @@ export function GetItems(Obj) : any[]{
     return Obj['Members'];
 }
 
-export function GetUserByID(users : User[], id : number) {
+export function GetUserByID(users : User[], id : string) {
     let userRet =  users.find( item => item.Id === id);
     if(!userRet)
         return null;

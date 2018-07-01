@@ -1,5 +1,6 @@
 import {DB} from "../../DB/DB";
 import {GetNextId} from "../../Helpers/MainHelpers";
+import * as uniqid from 'uniqid';
 
 
 
@@ -11,7 +12,8 @@ export function AddUser(user: any){
 }
 function _AddUser(user: any){
     if(_UserIndexOf(DB.Users, user.Name) === -1) {
-        user.Id = GetNextId(DB.Users);
+        user.Id = uniqid('user-');
+        // user.Id = GetNextId(DB.Users);
         DB.Users.push(Object.assign({}, user));
         DB.writeFile('Users');
         return 'succeeded! user \'' + user.Name + '\' added';
@@ -82,7 +84,7 @@ function _GetSpecificUser(user){
     let result = DB.Users.find(item => item.Name === user.userName && item.Password === user.userPassword);
     if(!!result)
         return result;
-    result = {"Id" : -1};
+    result = {"Id" : '-1'};
     return result;
 }
 

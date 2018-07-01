@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const DB_1 = require("../../DB/DB");
-const MainHelpers_1 = require("../../Helpers/MainHelpers");
+const uniqid = require("uniqid");
 function AddUser(user) {
     return new Promise((resolve) => {
         const result = _AddUser(user);
@@ -11,7 +11,8 @@ function AddUser(user) {
 exports.AddUser = AddUser;
 function _AddUser(user) {
     if (_UserIndexOf(DB_1.DB.Users, user.Name) === -1) {
-        user.Id = MainHelpers_1.GetNextId(DB_1.DB.Users);
+        user.Id = uniqid('user-');
+        // user.Id = GetNextId(DB.Users);
         DB_1.DB.Users.push(Object.assign({}, user));
         DB_1.DB.writeFile('Users');
         return 'succeeded! user \'' + user.Name + '\' added';
@@ -78,7 +79,7 @@ function _GetSpecificUser(user) {
     let result = DB_1.DB.Users.find(item => item.Name === user.userName && item.Password === user.userPassword);
     if (!!result)
         return result;
-    result = { "Id": -1 };
+    result = { "Id": '-1' };
     return result;
 }
 function _UserIndexOf(userArray, userName) {
