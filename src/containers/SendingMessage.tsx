@@ -32,7 +32,7 @@ class SendingMessage extends React.Component <{}, ISendingMessageState> {
      private handleButtonClick = async() => {
         if(this.state.inputVal.trim() === '')
             return;
-        let m = new Message(0, this.state.inputVal, this.stateStore.get('currentUser').Name, this.stateStore.get('Receiver').Name, moment().format('h:mm:ss'));
+        let m = new Message(0, this.state.inputVal, this.stateStore.get('currentUser').Name, this.stateStore.get('Receiver').Name, this.stateStore.get('currentUser').Id, this.stateStore.get('Receiver').Id, moment().format('h:mm:ss'));
         this.setState({inputVal: ''});
 
         await appService.AddMessage(m);

@@ -89,7 +89,7 @@ export class AppService {
         }
     }
 
-    async AddGroup(group: any, newGroupName : string, parentId : number) {
+    async AddGroup(group: any, newGroupName : string, parentId : string) {
         try {
             const ObjGroup = await AddGroup(group, newGroupName, parentId);
             console.log('AddGroup SUCCESSFUL');
@@ -101,7 +101,7 @@ export class AppService {
         }
     }
 
-    async AddUserToExistingGroup(userName: string, parentId : number) {
+    async AddUserToExistingGroup(userName: string, parentId : string) {
         try {
             const ObjGroup = await AddUserToExistingGroup(userName, parentId);
             console.log('AddUserToExistingGroup SUCCESSFUL');
@@ -113,7 +113,7 @@ export class AppService {
         }
     }
 
-    async DeleteUserFromGroup(userId: number, parentId : number) {
+    async DeleteUserFromGroup(userId: string, parentId : string) {
         try {
             const ObjGroup = await DeleteUserFromGroup(userId, parentId);
             console.log('DeleteUserFromGroup SUCCESSFUL');
@@ -125,7 +125,7 @@ export class AppService {
         }
     }
 
-    async FlatteningGroup(id: number, parentId : number) {
+    async FlatteningGroup(id: string, parentId : string) {
         try {
             const ObjGroup = await FlatteningGroup(id, parentId);
             console.log('FlatteningGroup SUCCESSFUL');
@@ -137,7 +137,7 @@ export class AppService {
         }
     }
 
-    async DeleteGroup(id: number, parentId : number) {
+    async DeleteGroup(id: string, parentId : string) {
         try {
             const ObjGroup = await DeleteGroup(id, parentId);
             console.log('DeleteGroup SUCCESSFUL');

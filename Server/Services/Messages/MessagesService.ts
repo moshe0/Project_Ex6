@@ -1,6 +1,7 @@
 import {DB} from "../../DB/DB";
-import {Message} from "../../../src/Models/Message";
-import {GetNextId, GetType} from "../../Helpers/MainHelpers";
+import {GetType} from "../../Helpers/MainHelpers";
+import * as uuidv4 from 'uuid/v4';
+import {Message} from "../../Models/Message";
 
 
 export function GetMessages(sender, receiver){
@@ -13,14 +14,14 @@ function _GetMessages(sender, receiver){
     let resMessages : any[] = [];
     if(GetType(receiver) === 'group'){
         for (let i: number = 0; i < DB.Messages.length; i++) {
-            if (DB.Messages[i].Receiving === receiver.Name)
+            if (DB.Messages[i].ReceiverId === receiver.Id)
                 resMessages.push(DB.Messages[i]);
         }
     }
     else {
         for (let i: number = 0; i < DB.Messages.length; i++) {
-            if (DB.Messages[i].SendingUser === sender.Name && DB.Messages[i].Receiving === receiver.Name ||
-                DB.Messages[i].SendingUser === receiver.Name && DB.Messages[i].Receiving === sender.Name)
+            if (DB.Messages[i].SenderId === sender.Id && DB.Messages[i].ReceiverId === receiver.Id ||
+                DB.Messages[i].SenderId === receiver.Id && DB.Messages[i].ReceiverId === sender.Id)
                 resMessages.push(DB.Messages[i]);
         }
     }
@@ -36,7 +37,7 @@ export function AddMessage(massage: any){
 function _AddMessage(message: any){
     if(! DB.Messages)
         DB.Messages = [];
-    message.Id = GetNextId(DB.Messages);
+    message.Id = uuidv4();
     DB.Messages.push(message);
     DB.writeFile('Messages');
 }

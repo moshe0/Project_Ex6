@@ -1,9 +1,11 @@
 import * as Controllers from "../../Controllers";
 import UserRouter from "../../Routes/UsersRouter";
 import {DB} from "../../DB/DB";
-import {GetGroupNextId, GetNextId, GetType} from "../../Helpers/MainHelpers";
+import {GetType} from "../../Helpers/MainHelpers";
 import {Group} from "../../Models/Group";
 import {User} from "../../Models/User";
+import * as uuidv4 from 'uuid/v4';
+
 
 export function GetGroups(){
     return new Promise((resolve) => {
@@ -16,11 +18,11 @@ function _GetGroups(){
 }
 
 
-export function AddGroup(group: any, newGroupName : string, parentId : number){
+export function AddGroup(group: any, newGroupName : string, parentId : string){
     return new Promise((resolve) => {
         let result = '';
-        group.Id = GetGroupNextId(DB.Groups);
-        if(parentId === -1){
+        group.Id = uuidv4();
+        if(parentId === '-1'){
             result = _AddGroupDirectSon(group, parentId);
         }
         else if(newGroupName === group.Name && newGroupName !== '')
@@ -30,7 +32,7 @@ export function AddGroup(group: any, newGroupName : string, parentId : number){
         resolve(result);
     });
 }
-function _AddGroup(group: any, newGroupName : string, parentId : number, parent ?: Group){
+function _AddGroup(group: any, newGroupName : string, parentId : string, parent ?: Group){
     let res = '';
     for(let item of DB.Groups){
         res = _AddGroupItem(group, newGroupName, parentId, item, null);
@@ -41,7 +43,7 @@ function _AddGroup(group: any, newGroupName : string, parentId : number, parent 
     }
     return 'failed';
 }
-function _AddGroupItem(group: any, newGroupName : string, parentId : number, node : Group, parent ?: Group) : string{
+function _AddGroupItem(group: any, newGroupName : string, parentId : string, node : Group, parent ?: Group) : string{
     let res = '';
     if(node.Id === parentId) {
         if (node.Members.find(item => item.Name === group.Name && GetType(item) === 'group'))
@@ -52,7 +54,7 @@ function _AddGroupItem(group: any, newGroupName : string, parentId : number, nod
             const tmpMembers = node.Members.slice();
             node.Members = [];
             node.Members.push(group);
-            let newGroup = new Group(GetGroupNextId(DB.Groups), newGroupName, tmpMembers);
+            let newGroup = new Group(uuidv4(), newGroupName, tmpMembers);
             node.Members.push(newGroup);
             return DB.writeFile('Groups');
         }
@@ -74,7 +76,7 @@ function _AddGroupItem(group: any, newGroupName : string, parentId : number, nod
     }
     return res;
 }
-function _AddGroupDirectSon(group: any, parentId : number){
+function _AddGroupDirectSon(group: any, parentId : string){
     let index = DB.Groups.findIndex(item => item.Name === group.Name);
     if(index > -1)
         return 'The group \'' + group.Name + '\' already exist';
@@ -88,17 +90,17 @@ function _AddGroupDirectSon(group: any, parentId : number){
 
 
 
-export function DeleteGroup(id: number, parentId : number){
+export function DeleteGroup(id: string, parentId : string){
     return new Promise((resolve) => {
         let result = '';
-        if(parentId === -1)
+        if(parentId === '-1')
             result = _DeleteGroupDirectSon(id, parentId);
         else
             result = _DeleteGroup(id, parentId);
         resolve(result);
     });
 }
-function _DeleteGroup(id: number, parentId : number){
+function _DeleteGroup(id: string, parentId : string){
     let res = '';
     for(let item of DB.Groups){
         res = _DeleteGroupItem(id, parentId, item);
@@ -109,7 +111,7 @@ function _DeleteGroup(id: number, parentId : number){
     }
     return 'failed';
 }
-function _DeleteGroupItem(id : number, parentId : number, node : Group){
+function _DeleteGroupItem(id : string, parentId : string, node : Group){
     let res = '';
 
     if(node.Id === parentId) {
@@ -146,7 +148,7 @@ function _DeleteGroupItem(id : number, parentId : number, node : Group){
     }
     return res;
 }
-function _DeleteGroupDirectSon(id : number, parentId : number){
+function _DeleteGroupDirectSon(id : string, parentId : string){
     let index = DB.Groups.findIndex(item => item.Id === id && GetType(item) === 'group');
     if (index === -1)
         return 'failed! item selected not found';
@@ -169,13 +171,13 @@ function _DeleteGroupDirectSon(id : number, parentId : number){
 }
 
 
-export function FlatteningGroup(id: number, parentId : number){
+export function FlatteningGroup(id: string, parentId : string){
     return new Promise((resolve) => {
         const result = _FlatteningGroup(id, parentId);
         resolve(result);
     });
 }
-function _FlatteningGroup(id: number, parentId : number){
+function _FlatteningGroup(id: string, parentId : string){
     let name = DB.Groups.find(item => item.Id === id  && GetType(item) === 'group');
     for(let item of DB.Groups){
         if(_FlatteningGroupItem(id, parentId, item) === 'succeeded')
@@ -183,7 +185,7 @@ function _FlatteningGroup(id: number, parentId : number){
     }
     return 'failed';
 }
-function _FlatteningGroupItem(id : number, parentId : number, node : Group){
+function _FlatteningGroupItem(id : string, parentId : string, node : Group){
     if(node.Id === parentId) {
         node.Members = node.Members[0].Members;
         return DB.writeFile('Groups');
@@ -202,7 +204,7 @@ function _FlatteningGroupItem(id : number, parentId : number, node : Group){
 
 
 
-export function AddUserToExistingGroup(userName: string, parentId : number){
+export function AddUserToExistingGroup(userName: string, parentId : string){
     return new Promise((resolve) => {
         let result = '';
         let user = DB.Users.find(item => item.Name === userName);
@@ -213,7 +215,7 @@ export function AddUserToExistingGroup(userName: string, parentId : number){
         resolve(result);
     });
 }
-function _AddUserToExistingGroup(user: User, parentId : number){
+function _AddUserToExistingGroup(user: User, parentId : string){
     let res = '';
     for(let item of DB.Groups){
         res = _AddUserToExistingGroupItem(user, item, parentId);
@@ -224,7 +226,7 @@ function _AddUserToExistingGroup(user: User, parentId : number){
     }
     return 'failed';
 }
-function _AddUserToExistingGroupItem(user: User, node : Group, parentId : number){
+function _AddUserToExistingGroupItem(user: User, node : Group, parentId : string){
     let res = '';
 
     if(node.Id === parentId) {
@@ -247,21 +249,21 @@ function _AddUserToExistingGroupItem(user: User, node : Group, parentId : number
 }
 
 
-export function DeleteUserFromGroup(userId : number, parentId : number){
+export function DeleteUserFromGroup(userId : string, parentId : string){
     return new Promise((resolve) => {
         const user = DB.Users.find(item => item.Id === userId);
         const result = _DeleteUserFromGroup(user.Name, parentId);
         resolve(result);
     });
 }
-function _DeleteUserFromGroup(userName : string, parentId : number){
+function _DeleteUserFromGroup(userName : string, parentId : string){
     for(let item of DB.Groups){
         if(_DeleteUserFromGroupItem(userName, parentId, item) === 'succeeded')
             return 'succeeded! user \'' + userName + '\' deleted from group';
     }
     return 'failed';
 }
-function _DeleteUserFromGroupItem(userName : string, parentId : number, node : Group){
+function _DeleteUserFromGroupItem(userName : string, parentId : string, node : Group){
     if(node.Id === parentId) {
         let index = node.Members.findIndex(item => item.Name === userName && GetType(item) === 'user');
         if (index === -1) {

@@ -1,7 +1,5 @@
-import {Group} from "../Models/Group";
-import {User} from "../Models/User";
-
-
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 /*
 
 export function GetNextId(obj : {Id}[]){
@@ -36,25 +34,25 @@ export function GetGroupNextId(obj : Group[]){
     return GetNextId(groupArr);
 }
 */
-
-export function GetType(Obj) : string{
-    for(let propName in Obj) {
-        if(propName === 'Members')
+function GetType(Obj) {
+    for (let propName in Obj) {
+        if (propName === 'Members')
             return 'group';
     }
     return 'user';
 }
-
-
-export function GetItems(Obj) : any[]{
-    if(GetType(Obj) === 'user')
+exports.GetType = GetType;
+function GetItems(Obj) {
+    if (GetType(Obj) === 'user')
         return [];
     return Obj['Members'];
 }
-
-export function GetUserByID(users : User[], id : string) {
-    let userRet =  users.find( item => item.Id === id);
-    if(!userRet)
+exports.GetItems = GetItems;
+function GetUserByID(users, id) {
+    let userRet = users.find(item => item.Id === id);
+    if (!userRet)
         return null;
     return userRet;
 }
+exports.GetUserByID = GetUserByID;
+//# sourceMappingURL=MainHelpers.js.map

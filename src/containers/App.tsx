@@ -39,22 +39,31 @@ class App extends React.Component<{}, IAppUserState> {
 
     Login = async () => {
         const LoginUser = await appService.GetSpecificUser(this.state.userLogin, this.state.passwordLogin);
-        if(!LoginUser || LoginUser.Id === '-1'){
+        if(!LoginUser){
+            this.setState({
+                MessageErr : 'There is no connection!'
+            });
+            return;
+        }
+        else if(LoginUser.Id === '-1'){
             this.setState({
                 MessageErr : 'User name or password incorrect!'
             });
             return;
         }
-        const Data = await appService.GetData();
 
-        if (!!LoginUser && !!Data) {
-            StateStore.FirstUse = 1;
-            StateStore.getInstance().setMany({
-                'currentUser': LoginUser,
-                'Data': Data,
-                'ModalState': false,
-                'LogInState': false
-            });
+        else {
+            const Data = await appService.GetData();
+
+            if (!!LoginUser && !!Data) {
+                StateStore.FirstUse = 1;
+                StateStore.getInstance().setMany({
+                    'currentUser': LoginUser,
+                    'Data': Data,
+                    'ModalState': false,
+                    'LogInState': false
+                });
+            }
         }
     };
 

@@ -69,7 +69,7 @@ export function AddUser(user : any):Promise<string> {
     });
 }
 
-export function AddGroup(group: any, newGroupName : string, parentId : number):Promise<string> {
+export function AddGroup(group: any, newGroupName : string, parentId : string):Promise<string> {
     return fetch(basicUrl + '/groups/AddGroup', {
         method: 'POST',
         body: JSON.stringify({"group" : {group}, "newGroupName" : {newGroupName}, "parentId" : {parentId}}),
@@ -80,7 +80,7 @@ export function AddGroup(group: any, newGroupName : string, parentId : number):P
 }
 
 
-export function AddUserToExistingGroup(userName: string, parentId : number):Promise<string> {
+export function AddUserToExistingGroup(userName: string, parentId : string):Promise<string> {
     return fetch(basicUrl + '/groups/AddUserToExistingGroup', {
         method: 'POST',
         body: JSON.stringify({"userName" : {userName}, "parentId" : {parentId}}),
@@ -90,7 +90,7 @@ export function AddUserToExistingGroup(userName: string, parentId : number):Prom
     });
 }
 
-export function DeleteUserFromGroup(userId: number, parentId : number):Promise<string> {
+export function DeleteUserFromGroup(userId: string, parentId : string):Promise<string> {
     return fetch(basicUrl + '/groups/DeleteUserFromGroup', {
         method: 'DELETE',
         body: JSON.stringify({"userId" : {userId}, "parentId" : {parentId}}),
@@ -100,7 +100,7 @@ export function DeleteUserFromGroup(userId: number, parentId : number):Promise<s
     });
 }
 
-export function FlatteningGroup(id: number, parentId : number):Promise<string> {
+export function FlatteningGroup(id: string, parentId : string):Promise<string> {
     return fetch(basicUrl + '/groups/FlatteningGroup', {
         method: 'DELETE',
         body: JSON.stringify({"id" : {id}, "parentId" : {parentId}}),
@@ -110,7 +110,7 @@ export function FlatteningGroup(id: number, parentId : number):Promise<string> {
     });
 }
 
-export function DeleteGroup(id: number, parentId : number):Promise<string> {
+export function DeleteGroup(id: string, parentId : string):Promise<string> {
     return fetch(basicUrl + '/groups/DeleteGroup', {
         method: 'DELETE',
         body: JSON.stringify({"id" : {id}, "parentId" : {parentId}}),

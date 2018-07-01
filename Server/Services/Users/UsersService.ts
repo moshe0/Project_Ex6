@@ -1,6 +1,5 @@
 import {DB} from "../../DB/DB";
-import {GetNextId} from "../../Helpers/MainHelpers";
-import * as uniqid from 'uniqid';
+import * as uuidv4 from 'uuid/v4';
 
 
 
@@ -12,8 +11,7 @@ export function AddUser(user: any){
 }
 function _AddUser(user: any){
     if(_UserIndexOf(DB.Users, user.Name) === -1) {
-        user.Id = uniqid('user-');
-        // user.Id = GetNextId(DB.Users);
+        user.Id = uuidv4();
         DB.Users.push(Object.assign({}, user));
         DB.writeFile('Users');
         return 'succeeded! user \'' + user.Name + '\' added';
@@ -23,13 +21,13 @@ function _AddUser(user: any){
 }
 
 
-export function DeleteUser(userId: number){
+export function DeleteUser(userId: string){
     return new Promise((resolve) => {
         const result = _DeleteUser(userId);
         resolve(result);
     });
 }
-function _DeleteUser(userId: number){
+function _DeleteUser(userId: string){
     let index = DB.Users.findIndex(item => item.Id === userId);
     if(index === -1)
         return 'failed';

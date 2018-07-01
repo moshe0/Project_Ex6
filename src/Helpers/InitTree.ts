@@ -276,13 +276,13 @@ export class InitTree {
         }
     }
 
-    static GetParentId(): number {
+    static GetParentId(): string {
         let itemFocused = $('.inFocus');
         if (itemFocused.length === 0)
-            return -1;
+            return '-1';
         let itemParent = itemFocused.data('parent');
         if (!$(itemParent).data('id'))
-            return -1;
+            return '-1';
         return $(itemParent).data('id');
     }
 

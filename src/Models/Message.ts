@@ -1,7 +1,5 @@
 export class Message{
-    constructor(public Id: number, public Content : string, public SendingUser : string, public Receiving : string, public TimeSent : string) {
+    constructor(public Id: number, public Content : string, public SenderName : string, public ReceiverName : string, public SenderId : string, public ReceiverId : string, public TimeSent : string) {
 
     }
 }
-
-
