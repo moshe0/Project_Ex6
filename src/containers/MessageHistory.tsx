@@ -82,7 +82,7 @@ class MessageHistory extends React.Component <{}, {Messages}>{
             );
         }
         const listMessages = this.state.Messages.map((item, idx) => {
-            const itemClassName = this.stateStore.get('currentUser').Name === item.SenderName? 'MineMessage MessageHistory' : 'OtherMessage MessageHistory';
+            const itemClassName = this.stateStore.get('currentUser').Id === item.SenderId? 'MineMessage MessageHistory' : 'OtherMessage MessageHistory';
             let Receiver = '';
             if(!! this.stateStore.get('Receiver'))
                 Receiver = GetType(this.stateStore.get('Receiver'));
