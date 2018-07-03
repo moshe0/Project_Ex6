@@ -9,15 +9,15 @@ GroupsRouter.get('/GetGroups', Controllers.GroupsController.GetGroups);
 
 GroupsRouter.post('/AddGroup', Controllers.GroupsController.AddGroup);
 
-GroupsRouter.delete('/DeleteGroup', Controllers.GroupsController.DeleteGroup);
+GroupsRouter.delete('/DeleteGroup/:id/:parentId', Controllers.GroupsController.DeleteGroup);
 
-GroupsRouter.delete('/FlatteningGroup', Controllers.GroupsController.FlatteningGroup);
+GroupsRouter.delete('/FlatteningGroup/:id/:parentId', Controllers.GroupsController.FlatteningGroup);
 
 
 
 GroupsRouter.post('/AddUserToExistingGroup', Controllers.GroupsController.AddUserToExistingGroup);
 
-GroupsRouter.delete('/DeleteUserFromGroup', Controllers.GroupsController.DeleteUserFromGroup);
+GroupsRouter.delete('/DeleteUserFromGroup/:userId/:parentId', Controllers.GroupsController.DeleteUserFromGroup);
 
 
 export default GroupsRouter;

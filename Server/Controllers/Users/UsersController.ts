@@ -8,12 +8,13 @@ export async function AddUser(req, res){
 }
 
 export async function DeleteUser(req, res){
-    const result = await services.UsersService.DeleteUser(req.body['userId'].userId);
+    const result = await services.UsersService.DeleteUser(req.params['userId']);
     res.json(result);
 }
 
 export async function UpdateUser(req, res){
-    const result = await services.UsersService.UpdateUser(req.body);
+    let user = {"Id" : req.params['id'], ...req.body};
+    const result = await services.UsersService.UpdateUser(user);
     res.json(result);
 }
 

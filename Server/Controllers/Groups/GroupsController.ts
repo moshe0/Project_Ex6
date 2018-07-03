@@ -12,12 +12,12 @@ export async function AddGroup(req, res){
 }
 
 export async function DeleteGroup(req, res){
-    const result = await services.GroupsService.DeleteGroup(req.body['id'].id, req.body['parentId'].parentId);
+    const result = await services.GroupsService.DeleteGroup(req.params['id'], req.params['parentId']);
     res.json(result);
 }
 
 export async function FlatteningGroup(req, res){
-    const result = await services.GroupsService.FlatteningGroup(req.body['id'].id, req.body['parentId'].parentId);
+    const result = await services.GroupsService.FlatteningGroup(req.params['id'], req.params['parentId']);
     res.json(result);
 }
 
@@ -29,6 +29,6 @@ export async function AddUserToExistingGroup(req, res){
 }
 
 export async function DeleteUserFromGroup(req, res){
-    const result = await services.GroupsService.DeleteUserFromGroup(req.body['userId'].userId, req.body['parentId'].parentId);
+    const result = await services.GroupsService.DeleteUserFromGroup(req.params['userId'], req.params['parentId']);
     res.json(result);
 }

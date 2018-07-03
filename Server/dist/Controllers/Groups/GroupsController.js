@@ -25,14 +25,14 @@ function AddGroup(req, res) {
 exports.AddGroup = AddGroup;
 function DeleteGroup(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
-        const result = yield services.GroupsService.DeleteGroup(req.body['id'].id, req.body['parentId'].parentId);
+        const result = yield services.GroupsService.DeleteGroup(req.params['id'], req.params['parentId']);
         res.json(result);
     });
 }
 exports.DeleteGroup = DeleteGroup;
 function FlatteningGroup(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
-        const result = yield services.GroupsService.FlatteningGroup(req.body['id'].id, req.body['parentId'].parentId);
+        const result = yield services.GroupsService.FlatteningGroup(req.params['id'], req.params['parentId']);
         res.json(result);
     });
 }
@@ -46,7 +46,7 @@ function AddUserToExistingGroup(req, res) {
 exports.AddUserToExistingGroup = AddUserToExistingGroup;
 function DeleteUserFromGroup(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
-        const result = yield services.GroupsService.DeleteUserFromGroup(req.body['userId'].userId, req.body['parentId'].parentId);
+        const result = yield services.GroupsService.DeleteUserFromGroup(req.params['userId'], req.params['parentId']);
         res.json(result);
     });
 }

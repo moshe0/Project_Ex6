@@ -7,9 +7,9 @@ const UserRouter = express.Router();
 
 UserRouter.post('/AddUser', Controllers.UsersController.AddUser);
 
-UserRouter.delete('/DeleteUser', Controllers.UsersController.DeleteUser);
+UserRouter.delete('/DeleteUser/:userId', Controllers.UsersController.DeleteUser);
 
-UserRouter.put('/UpdateUser', Controllers.UsersController.UpdateUser);
+UserRouter.put('/UpdateUser/:id', Controllers.UsersController.UpdateUser);
 
 UserRouter.get('/GetUsers', Controllers.UsersController.GetUsers);
 

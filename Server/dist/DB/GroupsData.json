@@ -1,16 +1,1 @@
-[
-	{"Id":"f505be8e-73c7-4be5-a438-a3596afcc33c","Name":"No Friends","Members":[]},
-	{"Id":"6a646b30-32c4-46d3-a642-a5dbca5da042","Name":"Friends","Members":[
-		{"Id":"03b1948e-ea68-4076-9a11-e4323bd026dd","Name":"Best Friends","Members":[
-			{"Id":"32010f74-414a-42b7-9452-508417f25d90","Name":"Good Friends","Members":[
-				{"Id":"58a2e393-1d4f-46dd-8b5d-7b964f911a1e"},
-				{"Id":"789f95bc-e75a-4963-8590-73f80761df11"},
-				{"Id":"c6b5ee74-7f31-4a1e-b19c-5ee6609c8774"},
-				{"Id":"6c0e0610-0c63-40f2-b199-146f16f374d6"}
-				]
-			}
-			]
-		}
-		]
-	}
-]
+[{"Id":"f505be8e-73c7-4be5-a438-a3596afcc33c","Name":"No Friends","Members":[]},{"Id":"6a646b30-32c4-46d3-a642-a5dbca5da042","Name":"Friends","Members":[{"Id":"03b1948e-ea68-4076-9a11-e4323bd026dd","Name":"Best Friends","Members":[{"Id":"58a2e393-1d4f-46dd-8b5d-7b964f911a1e"},{"Id":"c6b5ee74-7f31-4a1e-b19c-5ee6609c8774"},{"Id":"6c0e0610-0c63-40f2-b199-146f16f374d6"}]}]}]

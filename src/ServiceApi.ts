@@ -91,9 +91,8 @@ export function AddUserToExistingGroup(userName: string, parentId : string):Prom
 }
 
 export function DeleteUserFromGroup(userId: string, parentId : string):Promise<string> {
-    return fetch(basicUrl + '/groups/DeleteUserFromGroup', {
+    return fetch(basicUrl + '/groups/DeleteUserFromGroup/' + userId + '/' + parentId, {
         method: 'DELETE',
-        body: JSON.stringify({"userId" : {userId}, "parentId" : {parentId}}),
         headers: {'content-type': 'application/json'}
     }).then((res) => {
         return res.json();
@@ -101,9 +100,8 @@ export function DeleteUserFromGroup(userId: string, parentId : string):Promise<s
 }
 
 export function FlatteningGroup(id: string, parentId : string):Promise<string> {
-    return fetch(basicUrl + '/groups/FlatteningGroup', {
+    return fetch(basicUrl + '/groups/FlatteningGroup/' + id + '/' + parentId, {
         method: 'DELETE',
-        body: JSON.stringify({"id" : {id}, "parentId" : {parentId}}),
         headers: {'content-type': 'application/json'}
     }).then((res) => {
         return res.json();
@@ -111,9 +109,8 @@ export function FlatteningGroup(id: string, parentId : string):Promise<string> {
 }
 
 export function DeleteGroup(id: string, parentId : string):Promise<string> {
-    return fetch(basicUrl + '/groups/DeleteGroup', {
+    return fetch(basicUrl + '/groups/DeleteGroup/' + id + '/' + parentId, {
         method: 'DELETE',
-        body: JSON.stringify({"id" : {id}, "parentId" : {parentId}}),
         headers: {'content-type': 'application/json'}
     }).then((res) => {
         return res.json();
@@ -123,9 +120,9 @@ export function DeleteGroup(id: string, parentId : string):Promise<string> {
 
 
 export function UpdateUser(user : any):Promise<string> {
-    return fetch(basicUrl + '/users/UpdateUser', {
+    return fetch(basicUrl + '/users/UpdateUser/' + user.Id, {
         method: 'PUT',
-        body: JSON.stringify(user),
+        body: JSON.stringify({"Name" : user.Name, "Password" : user.Password, "Age" : user.Age}),
         headers: {'content-type': 'application/json'}
     }).then((res) => {
         return res.json();
@@ -135,16 +132,10 @@ export function UpdateUser(user : any):Promise<string> {
 
 
 export function DeleteUser(userId : any):Promise<string> {
-    return fetch(basicUrl + '/users/DeleteUser', {
+    return fetch(basicUrl + '/users/DeleteUser/' + userId, {
         method: 'DELETE',
-        body: JSON.stringify({"userId" : {userId}}),
         headers: {'content-type': 'application/json'}
     }).then((res) => {
         return res.json();
     });
 }
-
-
-
-
-
