@@ -1,8 +1,8 @@
 import * as fs from 'fs';
-import {User} from "../Models/User";
 import {Group} from "../Models/Group";
-import {Message} from "../Models/Message";
 import {GetType} from "../Helpers/MainHelpers";
+let db = require('./connection')();
+
 
 class DataBase {
     public Users : any[];
@@ -10,10 +10,48 @@ class DataBase {
     public Messages : any[];
 
     constructor() {
+        this.readData('users');
         this.Users = this.readFile("Users");
         this.Groups = this.readFile("Groups");
         this.Messages = this.readFile("Messages");
     }
+
+
+
+    readData(dataName: string) {
+        let query = 'SELECT * FROM ';
+        query = query + dataName;
+        db.query(query, (err, results) => {
+            switch (dataName) {
+                case 'users':
+                    DB.Users = results;
+                    break;
+                case 'groups':
+                    DB.Groups = results;
+                    break;
+                case 'messages':
+                    DB.Messages = results;
+                    break;
+            }
+
+        });
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     readFile(fileName: string) {
         const data = fs.readFileSync(`${__dirname}\\${fileName}Data.json`).toString();

@@ -2,11 +2,30 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const fs = require("fs");
 const MainHelpers_1 = require("../Helpers/MainHelpers");
+let db = require('./connection')();
 class DataBase {
     constructor() {
+        this.readData('users');
         this.Users = this.readFile("Users");
         this.Groups = this.readFile("Groups");
         this.Messages = this.readFile("Messages");
+    }
+    readData(dataName) {
+        let query = 'SELECT * FROM ';
+        query = query + dataName;
+        db.query(query, (err, results) => {
+            switch (dataName) {
+                case 'users':
+                    exports.DB.Users = results;
+                    break;
+                case 'groups':
+                    exports.DB.Groups = results;
+                    break;
+                case 'messages':
+                    exports.DB.Messages = results;
+                    break;
+            }
+        });
     }
     readFile(fileName) {
         const data = fs.readFileSync(`${__dirname}\\${fileName}Data.json`).toString();
