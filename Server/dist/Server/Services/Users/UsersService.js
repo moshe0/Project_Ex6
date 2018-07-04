@@ -62,7 +62,6 @@ function GetUsers() {
     return new Promise((resolve) => {
         let query = DB_1.DB.select('*', 'users');
         DB_1.db.query(query, (err, results) => {
-            DB2_1.DB2.Users;
             resolve(results);
         });
     });
@@ -76,7 +75,7 @@ function GetSpecificUser(user) {
         let query = DB_1.DB.select('*', 'users', { field: 'name', value: user.userName }, { field: 'password', value: user.userPassword });
         DB_1.db.query(query, (err, results) => {
             if (results.length === 0)
-                resolve({ "Id": '-1' });
+                resolve({ "Id": -1 });
             else
                 resolve(results[0]);
         });
