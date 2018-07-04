@@ -119,7 +119,7 @@ class TreeActions extends React.Component<{}, {}> {
         }
 
         else if(type === 'Group with users'){
-            if(InitTree.SelectedParentType() === 'With one group' && InitTree.GetParentId() !== '-1') {
+            if(InitTree.SelectedParentType() === 'With one group' && InitTree.GetParentId() !== -1) {
                 return (
                     <div className="ActionTree">
                         <div className="TreeActionsImages EditImageDisable"/>

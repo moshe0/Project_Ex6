@@ -3,7 +3,7 @@ import {Group} from "./Models/Group";
 
 const basicUrl = 'http://localhost:4000';
 
-export function GetSpecificUser(userName : string, userPassword : string):Promise<User> {
+export function GetSpecificUser(userName : string, userPassword : string):Promise<any> {
     const user = {
         userName : userName,
         userPassword : userPassword
@@ -69,7 +69,7 @@ export function AddUser(user : any):Promise<string> {
     });
 }
 
-export function AddGroup(group: any, newGroupName : string, parentId : string):Promise<string> {
+export function AddGroup(group: any, newGroupName : string, parentId : number):Promise<string> {
     return fetch(basicUrl + '/groups/AddGroup', {
         method: 'POST',
         body: JSON.stringify({"group" : {group}, "newGroupName" : {newGroupName}, "parentId" : {parentId}}),
@@ -80,7 +80,7 @@ export function AddGroup(group: any, newGroupName : string, parentId : string):P
 }
 
 
-export function AddUserToExistingGroup(userName: string, parentId : string):Promise<string> {
+export function AddUserToExistingGroup(userName: string, parentId : number):Promise<string> {
     return fetch(basicUrl + '/groups/AddUserToExistingGroup', {
         method: 'POST',
         body: JSON.stringify({"userName" : {userName}, "parentId" : {parentId}}),
@@ -90,7 +90,7 @@ export function AddUserToExistingGroup(userName: string, parentId : string):Prom
     });
 }
 
-export function DeleteUserFromGroup(userId: string, parentId : string):Promise<string> {
+export function DeleteUserFromGroup(userId: number, parentId : number):Promise<string> {
     return fetch(basicUrl + '/groups/DeleteUserFromGroup/' + userId + '/' + parentId, {
         method: 'DELETE',
         headers: {'content-type': 'application/json'}
@@ -99,7 +99,7 @@ export function DeleteUserFromGroup(userId: string, parentId : string):Promise<s
     });
 }
 
-export function FlatteningGroup(id: string, parentId : string):Promise<string> {
+export function FlatteningGroup(id: number, parentId : number):Promise<string> {
     return fetch(basicUrl + '/groups/FlatteningGroup/' + id + '/' + parentId, {
         method: 'DELETE',
         headers: {'content-type': 'application/json'}
@@ -108,7 +108,7 @@ export function FlatteningGroup(id: string, parentId : string):Promise<string> {
     });
 }
 
-export function DeleteGroup(id: string, parentId : string):Promise<string> {
+export function DeleteGroup(id: number, parentId : number):Promise<string> {
     return fetch(basicUrl + '/groups/DeleteGroup/' + id + '/' + parentId, {
         method: 'DELETE',
         headers: {'content-type': 'application/json'}
@@ -131,7 +131,7 @@ export function UpdateUser(user : any):Promise<string> {
 
 
 
-export function DeleteUser(userId : any):Promise<string> {
+export function DeleteUser(userId : number):Promise<string> {
     return fetch(basicUrl + '/users/DeleteUser/' + userId, {
         method: 'DELETE',
         headers: {'content-type': 'application/json'}

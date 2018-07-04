@@ -5,8 +5,6 @@ import StateStore from "../state/StateStore";
 import {User} from "../Models/User";
 import {appService} from "../AppService";
 import {Group} from "../Models/Group";
-// import {InitTree} from "../Helpers/InitTree";
-// import {Group} from "../Models/Group";
 
 
 
@@ -52,12 +50,12 @@ class Add extends React.Component<IAddProps, IAddState> {
     Add = async() => {
         let MessageRes : string;
         if(this.state.selectedType === 'New user'){
-            let userToSend = new User('0', this.state.userName, this.state.userPassword, parseInt(this.state.userAge));
+            let userToSend = new User(0, this.state.userName, this.state.userPassword, parseInt(this.state.userAge));
             MessageRes = await appService.AddUser(userToSend);
         }
         else if(this.state.selectedType === 'New group'){
-            let groupToSend = new Group('0', this.state.groupName, []);
-            MessageRes = await appService.AddGroup(groupToSend, '', '-1');
+            let groupToSend = new Group(0, this.state.groupName, []);
+            MessageRes = await appService.AddGroup(groupToSend, '', -1);
         }
         else if(this.state.selectedType === 'Add existing user to marked group'){
             MessageRes = await appService.AddUserToExistingGroup(this.state.userNameG, StateStore.getInstance().get('TreeSelected').Id);
@@ -65,11 +63,11 @@ class Add extends React.Component<IAddProps, IAddState> {
         }
         else{
             if(this.state.groupNameG !== ''){
-                let groupToSend = new Group('0', this.state.groupNameG, []);
+                let groupToSend = new Group(0, this.state.groupNameG, []);
                 MessageRes = await appService.AddGroup(groupToSend, '', StateStore.getInstance().get('TreeSelected').Id);
             }
             else{
-                let groupToSend = new Group('0', this.state.groupNameU, []);
+                let groupToSend = new Group(0, this.state.groupNameU, []);
                 MessageRes = await appService.AddGroup(groupToSend, this.state.newGroupName, StateStore.getInstance().get('TreeSelected').Id);
             }
         }

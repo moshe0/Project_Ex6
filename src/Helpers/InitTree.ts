@@ -276,13 +276,13 @@ export class InitTree {
         }
     }
 
-    static GetParentId(): string {
+    static GetParentId(): number {
         let itemFocused = $('.inFocus');
         if (itemFocused.length === 0)
-            return '-1';
+            return -1;
         let itemParent = itemFocused.data('parent');
         if (!$(itemParent).data('id'))
-            return '-1';
+            return -1;
         return $(itemParent).data('id');
     }
 
@@ -326,7 +326,7 @@ export class InitTree {
         return names;
     }
 
-    static GetSelectedId(): string {
+    static GetSelectedId(): number {
         let itemFocused = $('.inFocus');
         return itemFocused.data('id');
     }
@@ -350,7 +350,7 @@ export class InitTree {
         let prevData = StateStore.getInstance().get('AllTree');
         let currentData = $('ul li');
         let indexPrev = 0, indexCurrent = 0;
-        if (prevData.length >= currentData.length) { // in case of Fletting or Delete
+        if (prevData.length >= currentData.length) { // in case of Flatting or Delete
             while (indexPrev < prevData.length && indexCurrent < currentData.length) {
                 if (prevData[indexPrev].innerText === currentData[indexCurrent].innerText &&
                     prevData[indexPrev].style.textIndent === currentData[indexCurrent].style.textIndent) {

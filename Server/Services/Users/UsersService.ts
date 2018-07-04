@@ -1,5 +1,6 @@
-import {DB} from "../../DB/DB";
-import * as uuidv4 from 'uuid/v4';
+import {DB, db} from "../../DB/DB";
+import {DB2} from "../../DB/DB2";
+import {GetNextId} from "../../Helpers/MainHelpers";
 
 
 
@@ -10,10 +11,10 @@ export function AddUser(user: any){
     });
 }
 function _AddUser(user: any){
-    if(_UserIndexOf(DB.Users, user.Name) === -1) {
-        user.Id = uuidv4();
-        DB.Users.push(Object.assign({}, user));
-        DB.writeFile('Users');
+    if(_UserIndexOf(DB2.Users, user.Name) === -1) {
+        user.Id = GetNextId(DB2.Users);
+        DB2.Users.push(Object.assign({}, user));
+        DB2.writeFile('Users');
         return 'succeeded! user \'' + user.Name + '\' added';
     }
     else
@@ -21,21 +22,21 @@ function _AddUser(user: any){
 }
 
 
-export function DeleteUser(userId: string){
+export function DeleteUser(userId: number){
     return new Promise((resolve) => {
         const result = _DeleteUser(userId);
         resolve(result);
     });
 }
-function _DeleteUser(userId: string){
-    let index = DB.Users.findIndex(item => item.Id === userId);
+function _DeleteUser(userId: number){
+    let index = DB2.Users.findIndex(item => item.Id === userId);
     if(index === -1)
         return 'failed';
-    let userName = DB.Users[index].Name;
-    DB.Users.splice(index, 1);
-    let result = DB.writeFile('Users');
+    let userName = DB2.Users[index].Name;
+    DB2.Users.splice(index, 1);
+    let result = DB2.writeFile('Users');
     if(result === 'succeeded') {
-        result = DB.writeFile('Groups');
+        result = DB2.writeFile('Groups');
         if (result === 'succeeded')
             return 'succeeded! user \'' + userName + '\' deleted';
         return 'failed';
@@ -51,10 +52,10 @@ export function UpdateUser(user: any){
     });
 }
 function _UpdateUser(user: any){
-    let index = DB.Users.findIndex(item => item.Id === user.Id);
-    DB.Users[index].Password = user.Password;
-    DB.Users[index].Age = user.Age;
-    let result = DB.writeFile('Users');
+    let index = DB2.Users.findIndex(item => item.Id === user.Id);
+    DB2.Users[index].Password = user.Password;
+    DB2.Users[index].Age = user.Age;
+    let result = DB2.writeFile('Users');
     if(result === 'succeeded')
         return 'succeeded! user \'' + user.Name + '\' updated';
     return 'failed';
@@ -63,27 +64,28 @@ function _UpdateUser(user: any){
 
 export function GetUsers(){
     return new Promise((resolve) => {
-        const result = _GetUsers();
-        resolve(result);
+        let query = DB.select('*', 'users');
+        db.query(query, (err, results) => {
+            DB2.Users;
+            resolve(results);
+        });
     });
 }
 function _GetUsers(){
-    return DB.Users;
+    return DB2.Users;
 }
 
 
 export function GetSpecificUser(user){
     return new Promise((resolve) => {
-        const result = _GetSpecificUser(user);
-        resolve(result);
+        let query = DB.select('*', 'users', {field : 'name', value : user.userName}, {field : 'password', value : user.userPassword});
+        db.query(query, (err, results) => {
+            if(results.length === 0)
+                resolve({"Id" : '-1'});
+            else
+                resolve(results[0]);
+        });
     });
-}
-function _GetSpecificUser(user){
-    let result = DB.Users.find(item => item.Name === user.userName && item.Password === user.userPassword);
-    if(!!result)
-        return result;
-    result = {"Id" : '-1'};
-    return result;
 }
 
 

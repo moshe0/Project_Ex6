@@ -3,7 +3,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const DB2_1 = require("../../DB/DB2");
 const MainHelpers_1 = require("../../Helpers/MainHelpers");
 const Group_1 = require("../../Models/Group");
-const uuidv4 = require("uuid/v4");
 function GetGroups() {
     return new Promise((resolve) => {
         const result = _GetGroups();
@@ -17,8 +16,8 @@ function _GetGroups() {
 function AddGroup(group, newGroupName, parentId) {
     return new Promise((resolve) => {
         let result = '';
-        group.Id = uuidv4();
-        if (parentId === '-1') {
+        group.Id = MainHelpers_1.GetGroupNextId(DB2_1.DB2.Groups);
+        if (parentId === -1) {
             result = _AddGroupDirectSon(group, parentId);
         }
         else if (newGroupName === group.Name && newGroupName !== '')
@@ -51,7 +50,7 @@ function _AddGroupItem(group, newGroupName, parentId, node, parent) {
             const tmpMembers = node.Members.slice();
             node.Members = [];
             node.Members.push(group);
-            let newGroup = new Group_1.Group(uuidv4(), newGroupName, tmpMembers);
+            let newGroup = new Group_1.Group(MainHelpers_1.GetGroupNextId(DB2_1.DB2.Groups), newGroupName, tmpMembers);
             node.Members.push(newGroup);
             return DB2_1.DB2.writeFile('Groups');
         }
@@ -84,7 +83,7 @@ function _AddGroupDirectSon(group, parentId) {
 function DeleteGroup(id, parentId) {
     return new Promise((resolve) => {
         let result = '';
-        if (parentId === '-1')
+        if (parentId === -1)
             result = _DeleteGroupDirectSon(id, parentId);
         else
             result = _DeleteGroup(id, parentId);

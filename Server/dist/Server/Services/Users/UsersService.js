@@ -1,8 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const DB2_1 = require("../../DB/DB2");
-const uuidv4 = require("uuid/v4");
 const DB_1 = require("../../DB/DB");
+const DB2_1 = require("../../DB/DB2");
+const MainHelpers_1 = require("../../Helpers/MainHelpers");
 function AddUser(user) {
     return new Promise((resolve) => {
         const result = _AddUser(user);
@@ -12,7 +12,7 @@ function AddUser(user) {
 exports.AddUser = AddUser;
 function _AddUser(user) {
     if (_UserIndexOf(DB2_1.DB2.Users, user.Name) === -1) {
-        user.Id = uuidv4();
+        user.Id = MainHelpers_1.GetNextId(DB2_1.DB2.Users);
         DB2_1.DB2.Users.push(Object.assign({}, user));
         DB2_1.DB2.writeFile('Users');
         return 'succeeded! user \'' + user.Name + '\' added';

@@ -1,145 +1,88 @@
-import * as fs from 'fs';
-import {Group} from "../Models/Group";
-import {GetType} from "../Helpers/MainHelpers";
-let db = require('./connection')();
+import * as dataBase from 'mysql';
 
+let conn, query;
 
 class DataBase {
-    public Users : any[];
-    public Groups : Group[];
-    public Messages : any[];
 
-    constructor() {
-        this.readData('users');
-        this.Users = this.readFile("Users");
-        this.Groups = this.readFile("Groups");
-        this.Messages = this.readFile("Messages");
-    }
-
-
-
-    readData(dataName: string) {
-        let query = 'SELECT * FROM ';
-        query = query + dataName;
-        db.query(query, (err, results) => {
-            switch (dataName) {
-                case 'users':
-                    DB.Users = results;
-                    break;
-                case 'groups':
-                    DB.Groups = results;
-                    break;
-                case 'messages':
-                    DB.Messages = results;
-                    break;
-            }
-
+    initConnection() {
+        conn = dataBase.createConnection({
+            host: 'localhost',
+            user: 'root',
+            password: '123123',
+            database: 'chat'
         });
+
+        conn.connect();
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    readFile(fileName: string) {
-        const data = fs.readFileSync(`${__dirname}\\${fileName}Data.json`).toString();
-        if(fileName != "Groups")
-            return JSON.parse(data);
-        return this.GetGroupsWithFullUser(JSON.parse(data));
-    }
-
-    writeFile(fileName: string) : string {
-        switch (fileName) {
-            case 'Users':
-                fs.writeFile(`${__dirname}\\${fileName}Data.json`, JSON.stringify(this.Users), function(err) {
-                    if (!!err)
-                        return "failed";
-                        // res.send("failed");
-                    else
-                        return "succeeded";
-                        // res.send("succeeded");
-                });
-            break;
-            case 'Groups':
-                this.Groups = this.GetGroupsWithOnlyIdOfUser(this.Groups);
-                fs.writeFile(`${__dirname}\\${fileName}Data.json`, JSON.stringify(this.Groups), function(err) {
-                    if (!!err)
-                        return "failed";
-                    // res.send("failed");
-                    else
-                        return "succeeded";
-                    // res.send("succeeded");
-                });
-                this.Groups = this.GetGroupsWithFullUser(this.Groups);
-                break;
-            case 'Messages':
-                fs.writeFile(`${__dirname}\\${fileName}Data.json`, JSON.stringify(this.Messages), function(err) {
-                    if (!!err)
-                        return "failed";
-                    // res.send("failed");
-                    else
-                        return "succeeded";
-                    // res.send("succeeded");
-                });
-                break;
+    getConnection(){
+        if(!conn){
+            this.initConnection();
         }
-        return "succeeded";
+
+        return conn;
     }
 
-
-    GetGroupsWithOnlyIdOfUser (obj : Group[]){
-        for(let item of obj){
-            this._GetGroupsWithOnlyIdOfUser(item);
+    select(what, table, ...filters) {
+        query = `SELECT ${what} FROM ${table} `;
+        if (filters.length > 0){
+            query += 'WHERE ';
         }
-        return obj;
-    }
-    _GetGroupsWithOnlyIdOfUser (obj : Group){
-        for(let i=0 ; i<obj.Members.length ; i++) {
-            if(GetType(obj.Members[i]) === 'user') {
-                let index = this.Users.findIndex(user => user.Id === obj.Members[i].Id);
-                if(index === -1)
-                    obj.Members.splice(i--, 1);
-                else
-                    obj.Members[i] = {"Id" : this.Users[index].Id};
+        let filtersCount = 0;
+        for (const filter of filters){
+            if (isNaN(filter.value)) {
+                query +=  `${filter.field} = '${filter.value}'`;
             }
-            else
-                this._GetGroupsWithOnlyIdOfUser(obj.Members[i]);
+            else {
+                query +=  `${filter.field} = ${filter.value}`;
+            }
+            if (++filtersCount < filters.length) {
+                query += ' AND ';
+            }
         }
-        return obj;
+        return query;
     }
 
-    GetGroupsWithFullUser(obj : Group[]){
-        for(let item of obj){
-            this._GetGroupsWithFullUser(item);
-        }
-        return obj;
-    }
-    _GetGroupsWithFullUser(obj : Group){
-        for(let i=0 ; i<obj.Members.length ; i++) {
-            if(GetType(obj.Members[i]) === 'user') {
-                let index = this.Users.findIndex(user => user.Id === obj.Members[i].Id);
-                if(index === -1)
-                    obj.Members.splice(i--, 1);
-                else
-                    obj.Members[i] = Object.assign({}, this.Users[index]);
+    insert(table, ...values){
+        query = `INSERT INTO ${table} VALUES (`;
+        let valuesCount = 0;
+        for (const value of values){
+            if (isNaN(value)) {
+                query += `'${value}'`;
             }
-            else
-                this._GetGroupsWithFullUser(obj.Members[i]);
+            else {
+                query += value;
+            }
+            if (++valuesCount < values.length) {
+                query += ', ';
+            }
         }
-        return obj;
+        query += ')';
+        return query;
+    }
+
+    update(table, filter, ...values){
+        query = `UPDATE ${table} SET`  ;
+        let valuesCount = 0;
+        for (const value of values){
+            if (isNaN(value.value)) {
+                query += `${value.field} = '${value.value}'`;
+            }
+            else {
+                query += `${value.field} = ${value.value}`;
+            }
+            query += value.field + ' = ' + value.value;
+
+            if (++valuesCount < values.length) {
+                query += ', ';
+            }
+        }
+        if (filter){
+            query +=   `WHERE ${filter.field} = ${filter.value}`;
+        }
+        return query;
     }
 }
 
 export const DB = new DataBase();
+export const db = DB.getConnection();

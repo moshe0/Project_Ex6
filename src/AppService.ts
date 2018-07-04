@@ -13,15 +13,15 @@ import {User} from "./Models/User";
 export class AppService {
     async GetSpecificUser(userName : string, userPassword : string) {
         try {
-            const ObjUser : User = await GetSpecificUser(userName, userPassword);
+            const ObjUser = await GetSpecificUser(userName, userPassword);
             console.log('GetSpecificUser SUCCESSFUL');
 
-            if(ObjUser.Id === '-1'){
+            if(ObjUser.Id === -1){
                 let user = new User(ObjUser.Id, "1", "1", 1);
                 return user;
             }
             console.log(ObjUser);
-            let user = new User(ObjUser.Id, ObjUser.Name, ObjUser.Password, ObjUser.Age);
+            let user = new User(ObjUser.id, ObjUser.name, ObjUser.password, ObjUser.age);
             return user;
         }
         catch (e) {
@@ -89,7 +89,7 @@ export class AppService {
         }
     }
 
-    async AddGroup(group: any, newGroupName : string, parentId : string) {
+    async AddGroup(group: any, newGroupName : string, parentId : number) {
         try {
             const ObjGroup = await AddGroup(group, newGroupName, parentId);
             console.log('AddGroup SUCCESSFUL');
@@ -101,7 +101,7 @@ export class AppService {
         }
     }
 
-    async AddUserToExistingGroup(userName: string, parentId : string) {
+    async AddUserToExistingGroup(userName: string, parentId : number) {
         try {
             const ObjGroup = await AddUserToExistingGroup(userName, parentId);
             console.log('AddUserToExistingGroup SUCCESSFUL');
@@ -113,7 +113,7 @@ export class AppService {
         }
     }
 
-    async DeleteUserFromGroup(userId: string, parentId : string) {
+    async DeleteUserFromGroup(userId: number, parentId : number) {
         try {
             const ObjGroup = await DeleteUserFromGroup(userId, parentId);
             console.log('DeleteUserFromGroup SUCCESSFUL');
@@ -125,7 +125,7 @@ export class AppService {
         }
     }
 
-    async FlatteningGroup(id: string, parentId : string) {
+    async FlatteningGroup(id: number, parentId : number) {
         try {
             const ObjGroup = await FlatteningGroup(id, parentId);
             console.log('FlatteningGroup SUCCESSFUL');
@@ -137,7 +137,7 @@ export class AppService {
         }
     }
 
-    async DeleteGroup(id: string, parentId : string) {
+    async DeleteGroup(id: number, parentId : number) {
         try {
             const ObjGroup = await DeleteGroup(id, parentId);
             console.log('DeleteGroup SUCCESSFUL');

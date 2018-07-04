@@ -1,7 +1,6 @@
-import {DB} from "../../DB/DB";
-import {GetType} from "../../Helpers/MainHelpers";
-import * as uuidv4 from 'uuid/v4';
-import {Message} from "../../Models/Message";
+import {DB2} from "../../DB/DB2";
+import {Message} from "../../../src/Models/Message";
+import {GetNextId, GetType} from "../../Helpers/MainHelpers";
 
 
 export function GetMessages(sender, receiver){
@@ -13,16 +12,16 @@ export function GetMessages(sender, receiver){
 function _GetMessages(sender, receiver){
     let resMessages : any[] = [];
     if(GetType(receiver) === 'group'){
-        for (let i: number = 0; i < DB.Messages.length; i++) {
-            if (DB.Messages[i].ReceiverId === receiver.Id)
-                resMessages.push(DB.Messages[i]);
+        for (let i: number = 0; i < DB2.Messages.length; i++) {
+            if (DB2.Messages[i].Receiving === receiver.Name)
+                resMessages.push(DB2.Messages[i]);
         }
     }
     else {
-        for (let i: number = 0; i < DB.Messages.length; i++) {
-            if (DB.Messages[i].SenderId === sender.Id && DB.Messages[i].ReceiverId === receiver.Id ||
-                DB.Messages[i].SenderId === receiver.Id && DB.Messages[i].ReceiverId === sender.Id)
-                resMessages.push(DB.Messages[i]);
+        for (let i: number = 0; i < DB2.Messages.length; i++) {
+            if (DB2.Messages[i].SendingUser === sender.Name && DB2.Messages[i].Receiving === receiver.Name ||
+                DB2.Messages[i].SendingUser === receiver.Name && DB2.Messages[i].Receiving === sender.Name)
+                resMessages.push(DB2.Messages[i]);
         }
     }
     return resMessages;
@@ -35,9 +34,9 @@ export function AddMessage(massage: any){
     });
 }
 function _AddMessage(message: any){
-    if(! DB.Messages)
-        DB.Messages = [];
-    message.Id = uuidv4();
-    DB.Messages.push(message);
-    DB.writeFile('Messages');
+    if(! DB2.Messages)
+        DB2.Messages = [];
+    message.Id = GetNextId(DB2.Messages);
+    DB2.Messages.push(message);
+    DB2.writeFile('Messages');
 }

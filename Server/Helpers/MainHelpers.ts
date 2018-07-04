@@ -1,9 +1,6 @@
 import {Group} from "../Models/Group";
 import {User} from "../Models/User";
 
-
-/*
-
 export function GetNextId(obj : {Id}[]){
     let result = obj.map(item => item.Id);
     result.sort();
@@ -35,7 +32,6 @@ export function GetGroupNextId(obj : Group[]){
     }
     return GetNextId(groupArr);
 }
-*/
 
 export function GetType(Obj) : string{
     for(let propName in Obj) {
@@ -45,14 +41,13 @@ export function GetType(Obj) : string{
     return 'user';
 }
 
-
 export function GetItems(Obj) : any[]{
     if(GetType(Obj) === 'user')
         return [];
     return Obj['Members'];
 }
 
-export function GetUserByID(users : User[], id : string) {
+export function GetUserByID(users : User[], id : number) {
     let userRet =  users.find( item => item.Id === id);
     if(!userRet)
         return null;

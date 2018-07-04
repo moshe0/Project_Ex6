@@ -45,7 +45,7 @@ class App extends React.Component<{}, IAppUserState> {
             });
             return;
         }
-        else if(LoginUser.Id === '-1'){
+        else if(LoginUser.Id === -1){
             this.setState({
                 MessageErr : 'User name or password incorrect!'
             });
