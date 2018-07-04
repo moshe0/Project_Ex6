@@ -20,6 +20,31 @@ let Users = [
 ];
 
 
+
+bobo = {
+    name: 'Bobo',
+    job: 'Front-End Master',
+    age: 25
+};
+
+
+renameProp = (oldProp, newProp, { [oldProp]: old, ...others  }) => {
+    return {
+        [newProp]: old,
+        ...others
+    };
+};
+
+
+let aa = renameProp('Id', 'id', Users[0]);
+aa = renameProp('Age', 'age', aa);
+aa = renameProp('Password', 'password', aa);
+aa = renameProp('Name', 'name', aa);
+
+
+
+
+
 let index = Users.findIndex(item => item.Name === 'Mosdsshe');
 console.log(index === 'undefined');
 

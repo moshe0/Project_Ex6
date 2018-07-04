@@ -1,4 +1,4 @@
-import {User} from "./Models/User";
+// import {User} from "./Models/User";
 import {Group} from "./Models/Group";
 
 const basicUrl = 'http://localhost:4000';
@@ -26,7 +26,7 @@ export function GetGroups():Promise<Group[]> {
     });
 }
 
-export function GetUsers():Promise<User[]> {
+export function GetUsers():Promise<any[]> {
     return fetch(basicUrl + '/users/GetUsers', {
         headers: {'content-type': 'application/json'}
     }).then((res) => {

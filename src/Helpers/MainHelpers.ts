@@ -12,4 +12,11 @@ export function GetItems(Obj) : any[]{
     return Obj['Members'];
 }
 
+export function RenameProp(oldProp, newProp, { [oldProp]: old, ...others  }){
+    return {
+        [newProp]: old,
+        ...others
+    };
+}
+
 

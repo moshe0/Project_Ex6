@@ -9,6 +9,8 @@ import {
     GetUsers, UpdateUser
 } from "./ServiceApi";
 import {User} from "./Models/User";
+import {RenameProp} from "./Helpers/MainHelpers";
+
 
 export class AppService {
     async GetSpecificUser(userName : string, userPassword : string) {
@@ -35,6 +37,12 @@ export class AppService {
             const ObjGroups= await GetGroups();
             console.log(ObjGroups);
             const ObjUsers = await GetUsers();
+            for(let i=0 ; i<ObjUsers.length ; i++){
+                ObjUsers[i] = RenameProp('age', 'Age', ObjUsers[i]);
+                ObjUsers[i] = RenameProp('password', 'Password', ObjUsers[i]);
+                ObjUsers[i] = RenameProp('name', 'Name', ObjUsers[i]);
+                ObjUsers[i] = RenameProp('id', 'Id', ObjUsers[i]);
+            }
             console.log(ObjUsers);
 
             let data : any[] = [];
