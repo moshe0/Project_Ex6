@@ -1,9 +1,8 @@
-import * as dataBase from 'mysql';
-
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const dataBase = require("mysql");
 let conn, query;
-
 class DataBase {
-
     initConnection() {
         conn = dataBase.createConnection({
             host: 'localhost',
@@ -11,43 +10,37 @@ class DataBase {
             password: '123123',
             database: 'chat'
         });
-
         conn.connect();
     }
-
-    getConnection(){
-        if(!conn){
+    getConnection() {
+        if (!conn) {
             this.initConnection();
         }
-
         return conn;
     }
-
     select(what, table, ...filters) {
         query = `SELECT ${what} FROM ${table} `;
-        if (filters.length > 0){
+        if (filters.length > 0) {
             query += 'WHERE ';
         }
         let filtersCount = 0;
-        for (const filter of filters){
-            if(!filter.value)
-                query +=  `${filter.field} IS ${filter.value}`;
+        for (const filter of filters) {
+            if (!filter.value)
+                query += `${filter.field} IS ${filter.value}`;
             else if (isNaN(filter.value))
-                query +=  `${filter.field} = '${filter.value}'`;
+                query += `${filter.field} = '${filter.value}'`;
             else
-                query +=  `${filter.field} = ${filter.value}`;
-
+                query += `${filter.field} = ${filter.value}`;
             if (++filtersCount < filters.length) {
                 query += ' AND ';
             }
         }
         return query;
     }
-
-    insert(table, ...values){
+    insert(table, ...values) {
         query = `INSERT INTO ${table} VALUES (`;
         let valuesCount = 0;
-        for (const value of values){
+        for (const value of values) {
             if (isNaN(value)) {
                 query += `'${value}'`;
             }
@@ -61,11 +54,10 @@ class DataBase {
         query += ')';
         return query;
     }
-
-    update(table, filter, ...values){
-        query = `UPDATE ${table} SET`  ;
+    update(table, filter, ...values) {
+        query = `UPDATE ${table} SET`;
         let valuesCount = 0;
-        for (const value of values){
+        for (const value of values) {
             if (isNaN(value.value)) {
                 query += `${value.field} = '${value.value}'`;
             }
@@ -73,21 +65,19 @@ class DataBase {
                 query += `${value.field} = ${value.value}`;
             }
             query += value.field + ' = ' + value.value;
-
             if (++valuesCount < values.length) {
                 query += ', ';
             }
         }
-        if (filter){
-            query +=   `WHERE ${filter.field} = ${filter.value}`;
+        if (filter) {
+            query += `WHERE ${filter.field} = ${filter.value}`;
         }
         return query;
     }
-
-    delete(table,...filters){
+    delete(table, ...filters) {
         query = `DELETE FROM ${table} WHERE `;
         let filtersCount = 0;
-        for (const filter of filters){
+        for (const filter of filters) {
             if (isNaN(filter.value)) {
                 query += ` ${filter.field} = '${filter.value}'`;
             }
@@ -101,6 +91,6 @@ class DataBase {
         return query;
     }
 }
-
-export const DB = new DataBase();
-export const db = DB.getConnection();
+exports.DB = new DataBase();
+exports.db = exports.DB.getConnection();
+//# sourceMappingURL=DB.js.map

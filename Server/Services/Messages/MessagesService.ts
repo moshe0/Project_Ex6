@@ -1,6 +1,5 @@
-import {DB2} from "../../DB/DB2";
-import {Message} from "../../../src/Models/Message";
 import {GetNextId, GetType} from "../../Helpers/MainHelpers";
+import {DB2} from "../../DB/DB2";
 
 
 export function GetMessages(sender, receiver){
@@ -13,14 +12,14 @@ function _GetMessages(sender, receiver){
     let resMessages : any[] = [];
     if(GetType(receiver) === 'group'){
         for (let i: number = 0; i < DB2.Messages.length; i++) {
-            if (DB2.Messages[i].Receiving === receiver.Name)
+            if (DB2.Messages[i].ReceiverId === receiver.Id)
                 resMessages.push(DB2.Messages[i]);
         }
     }
     else {
         for (let i: number = 0; i < DB2.Messages.length; i++) {
-            if (DB2.Messages[i].SendingUser === sender.Name && DB2.Messages[i].Receiving === receiver.Name ||
-                DB2.Messages[i].SendingUser === receiver.Name && DB2.Messages[i].Receiving === sender.Name)
+            if (DB2.Messages[i].SenderId === sender.Id && DB2.Messages[i].ReceiverId === receiver.Id ||
+                DB2.Messages[i].SenderId === receiver.Id && DB2.Messages[i].ReceiverId === sender.Id)
                 resMessages.push(DB2.Messages[i]);
         }
     }
