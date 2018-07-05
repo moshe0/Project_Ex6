@@ -1,6 +1,5 @@
 import * as services from './../../Services';
 
-
 export async function GetGroups(req, res){
     const result = await services.GroupsService.GetGroups();
     res.json(result);

@@ -1,17 +1,78 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const DB2_1 = require("../../DB/DB2");
 const MainHelpers_1 = require("../../Helpers/MainHelpers");
 const Group_1 = require("../../Models/Group");
+const DB_1 = require("../../DB/DB");
 function GetGroups() {
-    return new Promise((resolve) => {
-        const result = _GetGroups();
-        resolve(result);
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            let result = yield getLastGroups();
+            for (let i = 0; i < result.length; i++) {
+                result[i].Members = [];
+                let members = yield getMembers(result[i].Id);
+                for (let item of members) {
+                    result[i].Members.push(yield getGroupMember('id Id, name Name, password Password, age Age', 'users', item.user_id));
+                }
+            }
+            for (let i = 0; i < result.length; i++) {
+                if (!!result[i].ParentId) {
+                    result.splice(i, 0, yield getSingleGroup('id Id, name Name, null Members, parent_id ParentId', 'groups', result[i].ParentId));
+                    result[i].Members = [];
+                    result[i].Members.push(result[i + 1]);
+                    result.splice(i + 1, 1);
+                    i--;
+                }
+            }
+            let tmp = JSON.stringify(result, ["Id", "Name", "Members", "Password", "Age"]);
+            result = JSON.parse(tmp);
+            return result;
+        }
+        catch (e) {
+            console.log(">>>>>>>>>>>. ERROR", e);
+        }
     });
 }
 exports.GetGroups = GetGroups;
-function _GetGroups() {
-    return DB2_1.DB2.Groups;
+function getLastGroups() {
+    return new Promise((resolve) => {
+        let query = 'SELECT id Id, name Name, null Members, parent_id ParentId FROM groups g1 WHERE NOT EXISTS (SELECT * FROM groups g2 WHERE g1.id = g2.parent_id)';
+        DB_1.db.query(query, (err, results) => {
+            resolve(results);
+        });
+    });
+}
+function getMembers(Id) {
+    return new Promise((resolve) => {
+        let query = DB_1.DB.select('*', 'members', { field: 'host_id', value: Id });
+        DB_1.db.query(query, (err, results) => {
+            resolve(results);
+        });
+    });
+}
+function getGroupMember(what, table, user_id) {
+    return new Promise((resolve) => {
+        let query = DB_1.DB.select(what, table, { field: 'id', value: user_id });
+        DB_1.db.query(query, (err, results) => {
+            resolve(results[0]);
+        });
+    });
+}
+function getSingleGroup(what, table, parentId) {
+    return new Promise((resolve) => {
+        let query = DB_1.DB.select(what, table, { field: 'id', value: parentId });
+        DB_1.db.query(query, (err, results) => {
+            resolve(results[0]);
+        });
+    });
 }
 function AddGroup(group, newGroupName, parentId) {
     return new Promise((resolve) => {

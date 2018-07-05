@@ -64,14 +64,11 @@ function _UpdateUser(user: any){
 
 export function GetUsers(){
     return new Promise((resolve) => {
-        let query = DB.select('*', 'users');
+        let query = DB.select('id ID, name Name, password Password, age Age', 'users');
         db.query(query, (err, results) => {
             resolve(results);
         });
     });
-}
-function _GetUsers(){
-    return DB2.Users;
 }
 
 

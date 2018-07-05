@@ -60,16 +60,13 @@ function _UpdateUser(user) {
 }
 function GetUsers() {
     return new Promise((resolve) => {
-        let query = DB_1.DB.select('*', 'users');
+        let query = DB_1.DB.select('id ID, name Name, password Password, age Age', 'users');
         DB_1.db.query(query, (err, results) => {
             resolve(results);
         });
     });
 }
 exports.GetUsers = GetUsers;
-function _GetUsers() {
-    return DB2_1.DB2.Users;
-}
 function GetSpecificUser(user) {
     return new Promise((resolve) => {
         let query = DB_1.DB.select('*', 'users', { field: 'name', value: user.userName }, { field: 'password', value: user.userPassword });

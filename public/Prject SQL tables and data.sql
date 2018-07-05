@@ -88,19 +88,14 @@ from members;
 
 CREATE TABLE `members` (
   `host_id` varchar(50) NOT NULL,
-  `member_id` varchar(50) NOT NULL,
-  `member_type` varchar(10) NOT NULL
+  `user_id` varchar(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
 INSERT INTO members
-(host_id, member_id, member_type)
+(host_id, user_id)
 VALUES
-(1000001, 1000002, 'group'),
-(1000002, 1000003, 'group'),
-(1000003, 1, 'user'),
-(1000003, 4, 'user'),
-(1000003, 5, 'user'),
-(1000003, 7, 'user');
-
-
+(1000003, 1),
+(1000003, 4),
+(1000003, 5),
+(1000003, 7);

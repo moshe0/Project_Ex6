@@ -25,12 +25,12 @@ class DataBase {
         }
         let filtersCount = 0;
         for (const filter of filters) {
-            if (isNaN(filter.value)) {
+            if (!filter.value)
+                query += `${filter.field} IS ${filter.value}`;
+            else if (isNaN(filter.value))
                 query += `${filter.field} = '${filter.value}'`;
-            }
-            else {
+            else
                 query += `${filter.field} = ${filter.value}`;
-            }
             if (++filtersCount < filters.length) {
                 query += ' AND ';
             }
