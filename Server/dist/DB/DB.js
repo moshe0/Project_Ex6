@@ -90,6 +90,13 @@ class DataBase {
         }
         return query;
     }
+    AnyQuery(query) {
+        return new Promise((resolve) => {
+            this.getConnection().query(query, (err, results) => {
+                resolve(results);
+            });
+        });
+    }
 }
 exports.DB = new DataBase();
 exports.db = exports.DB.getConnection();

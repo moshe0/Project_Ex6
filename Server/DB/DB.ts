@@ -100,6 +100,15 @@ class DataBase {
         }
         return query;
     }
+
+    AnyQuery(query : string){
+        return new Promise((resolve) => {
+            this.getConnection().query(query, (err, results) => {
+                resolve(results);
+            });
+        });
+    }
+
 }
 
 export const DB = new DataBase();
