@@ -17,7 +17,7 @@ class DataBase2 {
 
         query = DB.select('*', 'users');
         query = DB.insert('users', '1', '1', '1', '1' );
-        query = DB.update('users', {field:'id', value:'1'}, {field:'password', value:'2'}, {field:'age', value:'2'});
+        query = DB.update('users', {field:'id', value:'1'}, {field:'password', value:'2dfd'}, {field:'age', value:'2'});
         // db.query(query, (err, results) => {
         //     console.log(results);
         // });

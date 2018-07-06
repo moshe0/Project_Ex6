@@ -63,23 +63,20 @@ class DataBase {
     }
 
     update(table, filter, ...values){
-        query = `UPDATE ${table} SET`  ;
+        query = `UPDATE ${table} SET `  ;
         let valuesCount = 0;
         for (const value of values){
-            if (isNaN(value.value)) {
+            if (isNaN(value.value))
                 query += `${value.field} = '${value.value}'`;
-            }
-            else {
+            else
                 query += `${value.field} = ${value.value}`;
-            }
-            query += value.field + ' = ' + value.value;
 
             if (++valuesCount < values.length) {
                 query += ', ';
             }
         }
         if (filter){
-            query +=   `WHERE ${filter.field} = ${filter.value}`;
+            query +=   ` WHERE ${filter.field} = ${filter.value}`;
         }
         return query;
     }

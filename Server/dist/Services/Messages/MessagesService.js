@@ -27,10 +27,6 @@ function _GetMessages(sender, receiver) {
                                                        sender_id SenderId, receiver_id ReceiverId, time_sent TimeSent
                                                 From messages
                                                 WHERE receiver_id = ${receiver.Id}`);
-            // for (let i = 0; i < DB2.Messages.length; i++) {
-            //     if (DB2.Messages[i].ReceiverId === receiver.Id)
-            //         resMessages.push(DB2.Messages[i]);
-            // }
         }
         else {
             resMessages = yield DB_1.DB.AnyQuery(`SELECT id Id, content Content, sender_name SenderName, receiver_name ReceiverName,
@@ -39,11 +35,6 @@ function _GetMessages(sender, receiver) {
                                                 WHERE sender_id = ${sender.Id} AND receiver_id = ${receiver.Id}
                                                       OR
                                                       sender_id = ${receiver.Id} AND receiver_id = ${sender.Id}`);
-            // for (let i = 0; i < DB2.Messages.length; i++) {
-            //     if (DB2.Messages[i].SenderId === sender.Id && DB2.Messages[i].ReceiverId === receiver.Id ||
-            //         DB2.Messages[i].SenderId === receiver.Id && DB2.Messages[i].ReceiverId === sender.Id)
-            //         resMessages.push(DB2.Messages[i]);
-            // }
         }
         return resMessages;
     });
@@ -58,11 +49,6 @@ exports.AddMessage = AddMessage;
 function _AddMessage(message) {
     return __awaiter(this, void 0, void 0, function* () {
         yield DB_1.DB.AnyQuery(DB_1.DB.insert('messages (content, sender_name, receiver_name, sender_id, receiver_id, time_sent)', message.Content, message.SenderName, message.ReceiverName, message.SenderId, message.ReceiverId, message.TimeSent));
-        // if(! DB2.Messages)
-        //     DB2.Messages = [];
-        // message.Id = GetNextId(DB2.Messages);
-        // DB2.Messages.push(message);
-        // DB2.writeFile('Messages');
     });
 }
 //# sourceMappingURL=MessagesService.js.map

@@ -1,8 +1,14 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const DB_1 = require("../../DB/DB");
-const DB2_1 = require("../../DB/DB2");
-const MainHelpers_1 = require("../../Helpers/MainHelpers");
 function AddUser(user) {
     return new Promise((resolve) => {
         const result = _AddUser(user);
@@ -11,14 +17,15 @@ function AddUser(user) {
 }
 exports.AddUser = AddUser;
 function _AddUser(user) {
-    if (_UserIndexOf(DB2_1.DB2.Users, user.Name) === -1) {
-        user.Id = MainHelpers_1.GetNextId(DB2_1.DB2.Users);
-        DB2_1.DB2.Users.push(Object.assign({}, user));
-        DB2_1.DB2.writeFile('Users');
-        return 'succeeded! user \'' + user.Name + '\' added';
-    }
-    else
-        return 'failed! The user is already exists';
+    return __awaiter(this, void 0, void 0, function* () {
+        let count = yield DB_1.DB.AnyQuery(DB_1.DB.select('COUNT(*) count', 'users', { field: 'name', value: user.Name }));
+        if (count[0].count === 0) {
+            yield DB_1.DB.AnyQuery(DB_1.DB.insert('users (name, password, age)', user.Name, user.Password, user.Age));
+            return 'succeeded! user \'' + user.Name + '\' added';
+        }
+        else
+            return 'failed! The user is already exists';
+    });
 }
 function DeleteUser(userId) {
     return new Promise((resolve) => {
@@ -28,19 +35,14 @@ function DeleteUser(userId) {
 }
 exports.DeleteUser = DeleteUser;
 function _DeleteUser(userId) {
-    let index = DB2_1.DB2.Users.findIndex(item => item.Id === userId);
-    if (index === -1)
-        return 'failed';
-    let userName = DB2_1.DB2.Users[index].Name;
-    DB2_1.DB2.Users.splice(index, 1);
-    let result = DB2_1.DB2.writeFile('Users');
-    if (result === 'succeeded') {
-        result = DB2_1.DB2.writeFile('Groups');
-        if (result === 'succeeded')
-            return 'succeeded! user \'' + userName + '\' deleted';
-        return 'failed';
-    }
-    return 'failed';
+    return __awaiter(this, void 0, void 0, function* () {
+        let count = yield DB_1.DB.AnyQuery(DB_1.DB.select('COUNT(*) count, name', 'users', { field: 'id', value: userId }));
+        if (count[0].count === 0)
+            return 'failed';
+        yield DB_1.DB.AnyQuery(DB_1.DB.delete('users', { field: 'id', value: userId }));
+        yield DB_1.DB.AnyQuery(DB_1.DB.delete('members', { field: 'user_id', value: userId }));
+        return `succeeded! user '${count[0].name}' deleted`;
+    });
 }
 function UpdateUser(user) {
     return new Promise((resolve) => {
@@ -50,13 +52,13 @@ function UpdateUser(user) {
 }
 exports.UpdateUser = UpdateUser;
 function _UpdateUser(user) {
-    let index = DB2_1.DB2.Users.findIndex(item => item.Id === user.Id);
-    DB2_1.DB2.Users[index].Password = user.Password;
-    DB2_1.DB2.Users[index].Age = user.Age;
-    let result = DB2_1.DB2.writeFile('Users');
-    if (result === 'succeeded')
-        return 'succeeded! user \'' + user.Name + '\' updated';
-    return 'failed';
+    return __awaiter(this, void 0, void 0, function* () {
+        let count = yield DB_1.DB.AnyQuery(DB_1.DB.select('COUNT(*) count, name', 'users', { field: 'id', value: user.Id }));
+        if (count[0].count === 0)
+            return 'failed';
+        yield DB_1.DB.AnyQuery(DB_1.DB.update('users', { field: 'id', value: user.Id }, { field: 'password', value: user.Password }, { field: 'age', value: user.Age }));
+        return `succeeded! user '${count[0].name}' updated`;
+    });
 }
 function GetUsers() {
     return new Promise((resolve) => {
@@ -79,12 +81,4 @@ function GetSpecificUser(user) {
     });
 }
 exports.GetSpecificUser = GetSpecificUser;
-function _UserIndexOf(userArray, userName) {
-    for (let i = 0; i < userArray.length; i++) {
-        if (userArray[i].Name === userName) {
-            return i;
-        }
-    }
-    return -1;
-}
 //# sourceMappingURL=UsersService.js.map

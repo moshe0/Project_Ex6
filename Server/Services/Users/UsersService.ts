@@ -1,7 +1,4 @@
 import {DB, db} from "../../DB/DB";
-import {DB2} from "../../DB/DB2";
-import {GetNextId} from "../../Helpers/MainHelpers";
-
 
 
 export function AddUser(user: any){
@@ -10,11 +7,11 @@ export function AddUser(user: any){
         resolve(result);
     });
 }
-function _AddUser(user: any){
-    if(_UserIndexOf(DB2.Users, user.Name) === -1) {
-        user.Id = GetNextId(DB2.Users);
-        DB2.Users.push(Object.assign({}, user));
-        DB2.writeFile('Users');
+async function _AddUser(user: any){
+    let count = await DB.AnyQuery(DB.select('COUNT(*) count', 'users', {field : 'name', value : user.Name}));
+
+    if(count[0].count === 0){
+        await DB.AnyQuery(DB.insert( 'users (name, password, age)', user.Name, user.Password, user.Age));
         return 'succeeded! user \'' + user.Name + '\' added';
     }
     else
@@ -28,20 +25,15 @@ export function DeleteUser(userId: number){
         resolve(result);
     });
 }
-function _DeleteUser(userId: number){
-    let index = DB2.Users.findIndex(item => item.Id === userId);
-    if(index === -1)
+async function _DeleteUser(userId: number){
+    let count = await DB.AnyQuery(DB.select('COUNT(*) count, name', 'users', {field : 'id', value : userId}));
+    if(count[0].count === 0)
         return 'failed';
-    let userName = DB2.Users[index].Name;
-    DB2.Users.splice(index, 1);
-    let result = DB2.writeFile('Users');
-    if(result === 'succeeded') {
-        result = DB2.writeFile('Groups');
-        if (result === 'succeeded')
-            return 'succeeded! user \'' + userName + '\' deleted';
-        return 'failed';
-    }
-    return 'failed';
+
+    await DB.AnyQuery(DB.delete('users', {field : 'id', value : userId}));
+    await DB.AnyQuery(DB.delete('members', {field : 'user_id', value : userId}));
+
+    return `succeeded! user '${count[0].name}' deleted`;
 }
 
 
@@ -51,14 +43,13 @@ export function UpdateUser(user: any){
         resolve(result);
     });
 }
-function _UpdateUser(user: any){
-    let index = DB2.Users.findIndex(item => item.Id === user.Id);
-    DB2.Users[index].Password = user.Password;
-    DB2.Users[index].Age = user.Age;
-    let result = DB2.writeFile('Users');
-    if(result === 'succeeded')
-        return 'succeeded! user \'' + user.Name + '\' updated';
-    return 'failed';
+async function _UpdateUser(user: any){
+    let count = await DB.AnyQuery(DB.select('COUNT(*) count, name', 'users', {field : 'id', value : user.Id}));
+    if(count[0].count === 0)
+        return 'failed';
+
+    await DB.AnyQuery(DB.update('users', {field : 'id', value : user.Id}, {field : 'password', value : user.Password}, {field : 'age', value : user.Age}));
+    return `succeeded! user '${count[0].name}' updated`;
 }
 
 
@@ -82,14 +73,4 @@ export function GetSpecificUser(user){
                 resolve(results[0]);
         });
     });
-}
-
-
-function _UserIndexOf(userArray ,userName){
-    for(let i=0 ; i<userArray.length ; i++){
-        if(userArray[i].Name === userName){
-            return i;
-        }
-    }
-    return -1;
 }
