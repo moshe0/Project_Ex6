@@ -7,65 +7,49 @@ import {DB, db} from "../../DB/DB";
 
 export async function GetGroups(){
     try {
-    let result: any = await getLastGroups();
+        // Select the last groups
+        let result: any = await await DB.AnyQuery(`SELECT id Id, name Name, null Members, parent_id ParentId
+                                                          FROM groups g1 
+                                                          WHERE NOT EXISTS 
+                                                          (SELECT * FROM groups g2 WHERE g1.id = g2.parent_id)`);
 
-    for(let i=0 ; i < result.length ; i++){
-        result[i].Members = [];
-        let members: any = await getMembers(result[i].Id);
-        for(let item of members) {
-            result[i].Members.push(await getGroupMember('id Id, name Name, password Password, age Age', 'users', item.user_id));
-        }
-    }
-    
-    for(let i=0 ; i < result.length ; i++){
-        if(!!result[i].ParentId){
-            result.splice(i, 0, await getSingleGroup('id Id, name Name, null Members, parent_id ParentId', 'groups', result[i].ParentId));
+
+        // Find the user associated with them
+        for(let i=0 ; i < result.length ; i++){
             result[i].Members = [];
-            result[i].Members.push(result[i+1]);
-            result.splice(i+1, 1);
-            i--;
+            let members: any = await DB.AnyQuery(DB.select('*',
+                                                           'members',
+                                                           {field : 'host_id', value : result[i].Id}));
+            for(let item of members) {
+                DB.AnyQuery(DB.select('id Id, name Name, password Password, age Age',
+                                      'users',
+                                      {field: 'id', value: item.user_id}));
+            }
         }
-    }
 
-    let tmp = JSON.stringify(result, ["Id", "Name", "Members", "Password", "Age"]);
-    result = JSON.parse(tmp);
-    return result;
-    } catch (e) {
+        // Build the tree
+        for(let i=0 ; i < result.length ; i++){
+            if(!!result[i].ParentId){
+                result.splice(i, 0, await DB.AnyQuery(
+                    DB.select('id Id, name Name, null Members, parent_id ParentId',
+                        'groups', {field: 'id', value: result[i].ParentId})));
+                result[i].Members = [];
+                result[i].Members.push(result[i+1]);
+                result.splice(i+1, 1);
+                i--;
+            }
+        }
+
+        // Erase not necessary properties
+        let tmp = JSON.stringify(result, ["Id", "Name", "Members", "Password", "Age"]);
+        result = JSON.parse(tmp);
+        return result;
+    }
+    catch (e) {
         console.log(">>>>>>>>>>>. ERROR", e)
     }
 }
-function getLastGroups(){
-    return new Promise((resolve) => {
-        let query = 'SELECT id Id, name Name, null Members, parent_id ParentId FROM groups g1 WHERE NOT EXISTS (SELECT * FROM groups g2 WHERE g1.id = g2.parent_id)';
-        db.query(query, (err, results) => {
-            resolve(results);
-        });
-    });
-}
-function getMembers(Id : number){
-    return new Promise((resolve) => {
-        let query = DB.select('*', 'members', {field : 'host_id', value : Id});
-        db.query(query, (err, results) => {
-            resolve(results);
-        });
-    });
-}
-function getGroupMember(what: string, table: string, user_id : number){
-    return new Promise((resolve) => {
-        let query = DB.select(what, table, {field: 'id', value: user_id});
-        db.query(query, (err, results) => {
-            resolve(results[0]);
-        });
-    });
-}
-function getSingleGroup(what: string, table: string, parentId : number){
-    return new Promise((resolve) => {
-        let query = DB.select(what, table, {field: 'id', value: parentId});
-        db.query(query, (err, results) => {
-            resolve(results[0]);
-        });
-    });
-}
+
 
 
 export function AddGroup(group: any, newGroupName : string, parentId : number){
