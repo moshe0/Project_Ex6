@@ -76,7 +76,7 @@ export function AddGroup(group: any, newGroupName : string, parentId : number){
             result = _AddGroupDirectSon(group, parentId);
         }
         else if(newGroupName === group.Name && newGroupName !== '')
-            result = 'failed! \'Name\' and \'New group name\' must be diffrent';
+            result = `failed! 'Name' and 'New group name' must be diffrent`;
         else
             result = _AddGroup(group, newGroupName, parentId, null);
         resolve(result);
@@ -87,7 +87,7 @@ function _AddGroup(group: any, newGroupName : string, parentId : number, parent 
     for(let item of DB2.Groups){
         res = _AddGroupItem(group, newGroupName, parentId, item, null);
         if(res === 'succeeded')
-            return 'succeeded! group \'' + group.Name + '\' added';
+            return `succeeded! group '${group.Name}' added`;
         else if(res !== '')
             return res;
     }
@@ -97,10 +97,10 @@ function _AddGroupItem(group: any, newGroupName : string, parentId : number, nod
     let res = '';
     if(node.Id === parentId) {
         if (node.Members.find(item => item.Name === group.Name && GetType(item) === 'group'))
-            return 'failed! group \'' + group.Name + '\' already exist';
+            return `failed! group '${group.Name}' already exist`;
         if (newGroupName !== '') {
             if (node.Members.find(item => item.Name === group.tmpMembers && GetType(item) === 'group'))
-                return 'failed! group \'' + newGroupName + '\' already exist';
+                return `failed! group '${newGroupName}' already exist`;
             const tmpMembers = node.Members.slice();
             node.Members = [];
             node.Members.push(group);
@@ -129,11 +129,11 @@ function _AddGroupItem(group: any, newGroupName : string, parentId : number, nod
 function _AddGroupDirectSon(group: any, parentId : number){
     let index = DB2.Groups.findIndex(item => item.Name === group.Name);
     if(index > -1)
-        return 'The group \'' + group.Name + '\' already exist';
+        return `The group '${group.Name}' already exist`;
     DB2.Groups.push(group);
     let result = DB2.writeFile('Groups');
     if(result === 'succeeded')
-        return 'succeeded! group \'' + group.Name + '\' added!';
+        return `succeeded! group '${group.Name}' added!`;
     return 'failed';
 }
 
@@ -173,19 +173,19 @@ function _DeleteGroupItem(id : number, parentId : number, node : Group){
             let name = node.Members[index].Name;
             node.Members.splice(index, 1);
             DB2.writeFile('Groups');
-            return 'succeeded! group \'' + name + '\' deleted!!!';
+            return `succeeded! group '${name}' deleted`;
         }
 
         for(let elem of node.Members[index].Members) {
             let indexName = node.Members.findIndex(item => item.Name === elem.Name && GetType(item) === 'group' && item.Name !== node.Members[index].Name);
             if (indexName > -1)
-                return 'failed! same name in one of members in \'' + node.Members[index].Name + '\' and in is brothers';
+                return `failed! same name in one of members in '${node.Members[index].Name}' and in is brothers`;
         }
 
         let name = node.Members[index].Name;
         node.Members.splice(index, 1, ...node.Members[index].Members);
         DB2.writeFile('Groups');
-        return 'succeeded! group \'' + name + '\' deleted!!!'
+        return `succeeded! group '${name}' deleted`;
     }
     for(let item of node.Members) {
         if(GetType(item) === 'user')
@@ -211,13 +211,13 @@ function _DeleteGroupDirectSon(id : number, parentId : number){
     for(let elem of DB2.Groups[index].Members) {
         let indexName = DB2.Groups.findIndex(item => item.Name === elem.Name && GetType(item) === 'group' && item.Name !== DB2.Groups[index].Name);
         if (indexName > -1)
-            return 'failed! same name in one of members in \'' + DB2.Groups[index].Name + '\' and in is brothers';
+            return `failed! same name in one of members in '${DB2.Groups[index].Name}' and in is brothers`;
     }
 
     let name = DB2.Groups[index].Name;
     DB2.Groups.splice(index, 1, ...DB2.Groups[index].Members);
     DB2.writeFile('Groups');
-    return 'succeeded! group \'' + name + '\' deleted';
+    return `succeeded! group '${name}' deleted`;
 }
 
 
@@ -231,7 +231,7 @@ function _FlatteningGroup(id: number, parentId : number){
     let name = DB2.Groups.find(item => item.Id === id  && GetType(item) === 'group');
     for(let item of DB2.Groups){
         if(_FlatteningGroupItem(id, parentId, item) === 'succeeded')
-            return 'succeeded! group \'' + name + '\' flatted';
+            return `succeeded! group '${name}' flatted`;
     }
     return 'failed';
 }
@@ -259,7 +259,7 @@ export function AddUserToExistingGroup(userName: string, parentId : number){
         let result = '';
         let user = DB2.Users.find(item => item.Name === userName);
         if(!user)
-            result = 'failed! user \'' + userName + '\' not exist';
+            result = `failed! user '${userName}' not exist`;
         else
             result = _AddUserToExistingGroup(user, parentId);
         resolve(result);
@@ -270,7 +270,7 @@ function _AddUserToExistingGroup(user: User, parentId : number){
     for(let item of DB2.Groups){
         res = _AddUserToExistingGroupItem(user, item, parentId);
         if(res === 'succeeded')
-            return 'succeeded! user \'' + user.Name + '\' added to group';
+            return `succeeded! user '${user.Name}' added to group`;
         else if(res !== '')
             return res;
     }
@@ -281,7 +281,7 @@ function _AddUserToExistingGroupItem(user: User, node : Group, parentId : number
 
     if(node.Id === parentId) {
         if (node.Members.find(item => item.Name === user.Name && GetType(item) === 'user')) {
-            return 'failed! user \'' + user.Name + '\' already exist';
+            return `failed! user '${user.Name}' already exis`;
         }
         node.Members.push(user);
         return DB2.writeFile('Groups');
@@ -309,7 +309,7 @@ export function DeleteUserFromGroup(userId : number, parentId : number){
 function _DeleteUserFromGroup(userName : string, parentId : number){
     for(let item of DB2.Groups){
         if(_DeleteUserFromGroupItem(userName, parentId, item) === 'succeeded')
-            return 'succeeded! user \'' + userName + '\' deleted from group';
+            return `succeeded! user '${userName}' deleted from group`;
     }
     return 'failed';
 }
