@@ -42,7 +42,10 @@ VALUES
 ('No Friends', null),
 ('Friends', null),
 ('Best Friends', 1000001),
-('Good Friends', 1000002);
+('Good Friends', 1000002),
+('AAA', 1000000),
+('BBB', 1000000);
+
 
 
 

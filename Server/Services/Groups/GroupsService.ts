@@ -14,29 +14,38 @@ export async function GetGroups(){
                                                           (SELECT * FROM groups g2 WHERE g1.id = g2.parent_id)`);
 
 
-        // Find the user associated with them
+        // Find the user associated to them
         for(let i=0 ; i < result.length ; i++){
             result[i].Members = [];
             let members: any = await DB.AnyQuery(DB.select('*',
                                                            'members',
                                                            {field : 'host_id', value : result[i].Id}));
             for(let item of members) {
-                DB.AnyQuery(DB.select('id Id, name Name, password Password, age Age',
-                                      'users',
-                                      {field: 'id', value: item.user_id}));
+                result[i].Members.push(await DB.AnyQuery(DB.select('id Id, name Name, password Password, age Age',
+                                                                   'users',
+                                                                   {field: 'id', value: item.user_id}), true));
             }
         }
 
         // Build the tree
         for(let i=0 ; i < result.length ; i++){
             if(!!result[i].ParentId){
-                result.splice(i, 0, await DB.AnyQuery(
-                    DB.select('id Id, name Name, null Members, parent_id ParentId',
-                        'groups', {field: 'id', value: result[i].ParentId})));
+                result.splice(i, 0, await DB.AnyQuery(DB.select('id Id, name Name, null Members, parent_id ParentId',
+                    'groups',
+                    {field: 'id', value: result[i].ParentId}), true));
                 result[i].Members = [];
-                result[i].Members.push(result[i+1]);
-                result.splice(i+1, 1);
-                i--;
+
+                let children : any = await DB.AnyQuery(DB.select('id Id, name Name, null Members, parent_id ParentId',
+                                                           'groups',
+                                                           {field: 'parent_id', value: result[i+1].ParentId}));
+
+                let index : number;
+                for(let item of children) {
+                    index = result.findIndex(val => val.Id === item.Id);
+                    result[i].Members.push(result[index]);
+                    result.splice(index, 1);
+                }
+                i = i - children.length;
             }
         }
 

@@ -14,23 +14,35 @@ const DB_1 = require("../../DB/DB");
 function GetGroups() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            let result = yield getLastGroups();
+            // Select the last groups
+            let result = yield yield DB_1.DB.AnyQuery(`SELECT id Id, name Name, null Members, parent_id ParentId
+                                                          FROM groups g1 
+                                                          WHERE NOT EXISTS 
+                                                          (SELECT * FROM groups g2 WHERE g1.id = g2.parent_id)`);
+            // Find the user associated to them
             for (let i = 0; i < result.length; i++) {
                 result[i].Members = [];
-                let members = yield getMembers(result[i].Id);
+                let members = yield DB_1.DB.AnyQuery(DB_1.DB.select('*', 'members', { field: 'host_id', value: result[i].Id }));
                 for (let item of members) {
-                    result[i].Members.push(yield getGroupMember('id Id, name Name, password Password, age Age', 'users', item.user_id));
+                    result[i].Members.push(yield DB_1.DB.AnyQuery(DB_1.DB.select('id Id, name Name, password Password, age Age', 'users', { field: 'id', value: item.user_id }), true));
                 }
             }
+            // Build the tree
             for (let i = 0; i < result.length; i++) {
                 if (!!result[i].ParentId) {
-                    result.splice(i, 0, yield getSingleGroup('id Id, name Name, null Members, parent_id ParentId', 'groups', result[i].ParentId));
+                    result.splice(i, 0, yield DB_1.DB.AnyQuery(DB_1.DB.select('id Id, name Name, null Members, parent_id ParentId', 'groups', { field: 'id', value: result[i].ParentId }), true));
                     result[i].Members = [];
-                    result[i].Members.push(result[i + 1]);
-                    result.splice(i + 1, 1);
-                    i--;
+                    let children = yield DB_1.DB.AnyQuery(DB_1.DB.select('id Id, name Name, null Members, parent_id ParentId', 'groups', { field: 'parent_id', value: result[i + 1].ParentId }));
+                    let index;
+                    for (let item of children) {
+                        index = result.findIndex(val => val.Id === item.Id);
+                        result[i].Members.push(result[index]);
+                        result.splice(index, 1);
+                    }
+                    i = i - children.length;
                 }
             }
+            // Erase not necessary properties
             let tmp = JSON.stringify(result, ["Id", "Name", "Members", "Password", "Age"]);
             result = JSON.parse(tmp);
             return result;
@@ -41,38 +53,6 @@ function GetGroups() {
     });
 }
 exports.GetGroups = GetGroups;
-function getLastGroups() {
-    return new Promise((resolve) => {
-        let query = 'SELECT id Id, name Name, null Members, parent_id ParentId FROM groups g1 WHERE NOT EXISTS (SELECT * FROM groups g2 WHERE g1.id = g2.parent_id)';
-        DB_1.db.query(query, (err, results) => {
-            resolve(results);
-        });
-    });
-}
-function getMembers(Id) {
-    return new Promise((resolve) => {
-        let query = DB_1.DB.select('*', 'members', { field: 'host_id', value: Id });
-        DB_1.db.query(query, (err, results) => {
-            resolve(results);
-        });
-    });
-}
-function getGroupMember(what, table, user_id) {
-    return new Promise((resolve) => {
-        let query = DB_1.DB.select(what, table, { field: 'id', value: user_id });
-        DB_1.db.query(query, (err, results) => {
-            resolve(results[0]);
-        });
-    });
-}
-function getSingleGroup(what, table, parentId) {
-    return new Promise((resolve) => {
-        let query = DB_1.DB.select(what, table, { field: 'id', value: parentId });
-        DB_1.db.query(query, (err, results) => {
-            resolve(results[0]);
-        });
-    });
-}
 function AddGroup(group, newGroupName, parentId) {
     return new Promise((resolve) => {
         let result;

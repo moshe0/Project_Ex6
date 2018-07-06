@@ -98,10 +98,13 @@ class DataBase {
         return query;
     }
 
-    AnyQuery(query : string){
+    AnyQuery(query : string, isOneRow = false){
         return new Promise((resolve) => {
             this.getConnection().query(query, (err, results) => {
-                resolve(results);
+                if(isOneRow)
+                    resolve(results[0]);
+                else
+                    resolve(results);
             });
         });
     }
