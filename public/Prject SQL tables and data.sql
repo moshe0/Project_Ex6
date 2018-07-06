@@ -1,7 +1,6 @@
 #*****************  USERS *********************************
 
-select *
-from users;
+DROP TABLE users, groups, members, messages;
 
 CREATE TABLE `users` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -27,8 +26,7 @@ VALUES
 
 #*****************  GROUPS *********************************
 
-SELECT *
-FROM groups;
+
 
 CREATE TABLE `groups` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -52,8 +50,6 @@ VALUES
 #*****************  MESSAGES *********************************
 
 
-select *
-from messages;
 
 
 CREATE TABLE `messages` (
@@ -61,8 +57,8 @@ CREATE TABLE `messages` (
   `content` varchar(45) NOT NULL,
   `sender_name` varchar(45) NOT NULL,
   `receiver_name` varchar(45) NOT NULL,
-  `sender_id` varchar(45) NOT NULL,
-  `receiver_id` varchar(45) NOT NULL,
+  `sender_id` int(11) NOT NULL,
+  `receiver_id` int(11) NOT NULL,
   `time_sent` varchar(45) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `id_UNIQUE` (`id`)
@@ -83,8 +79,7 @@ VALUES
 
 #*****************  MEMBERS *********************************
 
-select *
-from members;
+
 
 CREATE TABLE `members` (
   `host_id` varchar(50) NOT NULL,
@@ -99,3 +94,19 @@ VALUES
 (1000003, 4),
 (1000003, 5),
 (1000003, 7);
+
+
+
+select *
+from users;
+
+SELECT *
+FROM groups;
+
+select *
+from messages;
+
+select *
+from members;
+
+
