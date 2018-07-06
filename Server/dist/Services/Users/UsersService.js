@@ -21,7 +21,7 @@ function _AddUser(user) {
         let count = yield DB_1.DB.AnyQuery(DB_1.DB.select('COUNT(*) count', 'users', { field: 'name', value: user.Name }));
         if (count[0].count === 0) {
             yield DB_1.DB.AnyQuery(DB_1.DB.insert('users (name, password, age)', user.Name, user.Password, user.Age));
-            return 'succeeded! user \'' + user.Name + '\' added';
+            return `succeeded! user '${user.Name}' added`;
         }
         else
             return 'failed! The user is already exists';

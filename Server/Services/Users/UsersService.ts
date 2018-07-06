@@ -12,7 +12,7 @@ async function _AddUser(user: any){
 
     if(count[0].count === 0){
         await DB.AnyQuery(DB.insert( 'users (name, password, age)', user.Name, user.Password, user.Age));
-        return 'succeeded! user \'' + user.Name + '\' added';
+        return `succeeded! user '${user.Name}' added`;
     }
     else
         return 'failed! The user is already exists';

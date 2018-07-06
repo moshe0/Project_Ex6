@@ -16,7 +16,7 @@ export async function GetGroups(){
             result[i].Members.push(await getGroupMember('id Id, name Name, password Password, age Age', 'users', item.user_id));
         }
     }
-
+    
     for(let i=0 ; i < result.length ; i++){
         if(!!result[i].ParentId){
             result.splice(i, 0, await getSingleGroup('id Id, name Name, null Members, parent_id ParentId', 'groups', result[i].ParentId));
@@ -70,71 +70,46 @@ function getSingleGroup(what: string, table: string, parentId : number){
 
 export function AddGroup(group: any, newGroupName : string, parentId : number){
     return new Promise((resolve) => {
-        let result = '';
-        group.Id = GetGroupNextId(DB2.Groups);
-        if(parentId === -1){
+        let result : Promise<string>;
+        if(parentId === -1)
             result = _AddGroupDirectSon(group, parentId);
-        }
-        else if(newGroupName === group.Name && newGroupName !== '')
-            result = `failed! 'Name' and 'New group name' must be diffrent`;
         else
-            result = _AddGroup(group, newGroupName, parentId, null);
+            result = _AddGroup(group, newGroupName, parentId);
         resolve(result);
     });
 }
-function _AddGroup(group: any, newGroupName : string, parentId : number, parent ?: Group){
-    let res = '';
-    for(let item of DB2.Groups){
-        res = _AddGroupItem(group, newGroupName, parentId, item, null);
-        if(res === 'succeeded')
-            return `succeeded! group '${group.Name}' added`;
-        else if(res !== '')
-            return res;
-    }
-    return 'failed';
-}
-function _AddGroupItem(group: any, newGroupName : string, parentId : number, node : Group, parent ?: Group) : string{
-    let res = '';
-    if(node.Id === parentId) {
-        if (node.Members.find(item => item.Name === group.Name && GetType(item) === 'group'))
-            return `failed! group '${group.Name}' already exist`;
-        if (newGroupName !== '') {
-            if (node.Members.find(item => item.Name === group.tmpMembers && GetType(item) === 'group'))
-                return `failed! group '${newGroupName}' already exist`;
-            const tmpMembers = node.Members.slice();
-            node.Members = [];
-            node.Members.push(group);
-            let newGroup = new Group(GetGroupNextId(DB2.Groups), newGroupName, tmpMembers);
-            node.Members.push(newGroup);
-            return DB2.writeFile('Groups');
-        }
+async function _AddGroup(group: any, newGroupName : string, parentId : number) {
+    if (newGroupName === group.Name && newGroupName !== '')
+        return `failed! 'Name' and 'New group name' must be diffrent`;
 
-
-        else {
-            node.Members.push(group);
-            return DB2.writeFile('Groups');
-        }
-    }
-    for(let item of node.Members) {
-        if(GetType(item) === 'user')
-            break;
-        res = _AddGroupItem(group, newGroupName, parentId, item, node);
-        if(res === 'succeeded')
-            return res;
-        else if(res != '')
-            return res;
-    }
-    return res;
-}
-function _AddGroupDirectSon(group: any, parentId : number){
-    let index = DB2.Groups.findIndex(item => item.Name === group.Name);
-    if(index > -1)
+    let count = await DB.AnyQuery(DB.select('COUNT(*) count, name', 'groups',
+        {field: 'parent_id', value: parentId}, {field: 'name', value: group.Name}));
+    if (count[0].count > 0)
         return `The group '${group.Name}' already exist`;
-    DB2.Groups.push(group);
-    let result = DB2.writeFile('Groups');
-    if(result === 'succeeded')
-        return `succeeded! group '${group.Name}' added!`;
-    return 'failed';
+
+    if (newGroupName === '') {
+        await DB.AnyQuery(DB.insert('groups (name, parent_id)', group.Name, parentId));
+        return `succeeded! group '${group.Name}' added`;
+    }
+    else {
+        let count = await DB.AnyQuery(DB.select('COUNT(*) count, name', 'groups',
+            {field: 'parent_id', value: parentId}, {field: 'name', value: newGroupName}));
+        if (count[0].count > 0)
+            return `The group '${newGroupName}' already exist`;
+        await DB.AnyQuery(DB.insert('groups (name, parent_id)', group.Name, parentId));
+        let ee = await DB.AnyQuery(DB.insert('groups (name, parent_id)', newGroupName, parentId));
+        await DB.AnyQuery(DB.update('members', {field: 'host_id', value: parentId}, ee[0].id));
+        return `succeeded! groups: '${group.Name}', '${newGroupName}' added`;
+    }
+}
+async function _AddGroupDirectSon(group: any, parentId : number){
+    let count = await DB.AnyQuery(DB.select('COUNT(*) count, name', 'groups', {field : 'name', value : group.Name}, {field : 'parent_id', value : null}));
+
+    if(count[0].count > 0)
+        return `The group '${group.Name}' already exist`;
+
+    await DB.AnyQuery(DB.insert( 'groups (name)', group.Name));
+    return `succeeded! group '${group.Name}' added!`;
 }
 
 
