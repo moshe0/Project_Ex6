@@ -8,10 +8,17 @@ import {DB, db} from "../../DB/DB";
 export async function GetGroups(){
     try {
         // Select the last groups
-        let result: any = await await DB.AnyQuery(`SELECT id Id, name Name, null Members, parent_id ParentId
-                                                          FROM groups g1 
-                                                          WHERE NOT EXISTS 
-                                                          (SELECT * FROM groups g2 WHERE g1.id = g2.parent_id)`);
+
+        let result: any = await await DB.AnyQuery
+        ( `SELECT aa1.id Id, aa1.name Name, null Members, aa1.parent_id ParentId
+                 FROM
+                 	(SELECT id , name, null Members, parent_id
+                 	FROM groups g1 
+                 	WHERE NOT EXISTS (SELECT * FROM groups g2 WHERE g1.id = g2.parent_id)) aa1
+                 WHERE aa1.parent_id not in 
+                 	(SELECT parent_id
+                 	FROM groups g3
+                 	WHERE g3.parent_id IS NOT NULL AND EXISTS (SELECT * FROM groups g4 WHERE g3.id = g4.parent_id))`);
 
 
         // Find the user associated to them
@@ -30,6 +37,15 @@ export async function GetGroups(){
         // Build the tree
         for(let i=0 ; i < result.length ; i++){
             if(!!result[i].ParentId){
+                let NodeId : any = await DB.AnyQuery(DB.select('id Id',
+                                                         'groups',
+                                                         {field: 'id', value: result[i].ParentId}), true);
+                NodeId = NodeId.Id;
+                if(HelperBuildTree(result, i+1, NodeId, 0)) {
+                    result.splice(i+1, 1);
+                    --i;
+                    break;
+                }
                 result.splice(i, 0, await DB.AnyQuery(DB.select('id Id, name Name, null Members, parent_id ParentId',
                     'groups',
                     {field: 'id', value: result[i].ParentId}), true));
@@ -39,13 +55,23 @@ export async function GetGroups(){
                                                            'groups',
                                                            {field: 'parent_id', value: result[i+1].ParentId}));
 
-                let index : number;
-                for(let item of children) {
-                    index = result.findIndex(val => val.Id === item.Id);
-                    result[i].Members.push(result[index]);
-                    result.splice(index, 1);
+                for(let j=0 ; j<children.length ; j++){
+                    children[j].Members = [];
                 }
-                i = i - children.length;
+
+
+                let index : number;
+                for(let j=0 ; j<children.length ; j++) {
+                    index = result.findIndex(val => val.Id === children[j].Id);
+                    if(index !== -1) {
+                        children[j] = Object.assign({}, result[index]);
+                        result.splice(index, 1);
+
+                    }
+                    result[i].Members.push(children[j]);
+                }
+
+                --i;
             }
         }
 
@@ -57,6 +83,13 @@ export async function GetGroups(){
     catch (e) {
         console.log(">>>>>>>>>>>. ERROR", e)
     }
+}
+
+function HelperBuildTree(result :any, copyIndex : number, NodeId : number, i : number) : boolean{
+    let index = result[i].Members.findIndex(item => item.Id = NodeId);
+    if(index > -1)
+
+    return false;
 }
 
 
@@ -71,7 +104,7 @@ export function AddGroup(group: any, newGroupName : string, parentId : number){
         resolve(result);
     });
 }
-async function _AddGroup(group: any, newGroupName : string, parentId : number) {
+    async function _AddGroup(group: any, newGroupName : string, parentId : number) {
     if (newGroupName === group.Name && newGroupName !== '')
         return `failed! 'Name' and 'New group name' must be diffrent`;
 
@@ -90,8 +123,8 @@ async function _AddGroup(group: any, newGroupName : string, parentId : number) {
         if (count[0].count > 0)
             return `The group '${newGroupName}' already exist`;
         await DB.AnyQuery(DB.insert('groups (name, parent_id)', group.Name, parentId));
-        let ee = await DB.AnyQuery(DB.insert('groups (name, parent_id)', newGroupName, parentId));
-        await DB.AnyQuery(DB.update('members', {field: 'host_id', value: parentId}, ee[0].id));
+        let newGroupNameObj : any = await DB.AnyQuery(DB.insert('groups (name, parent_id)', newGroupName, parentId));
+        await DB.AnyQuery(DB.update('members', {field: 'host_id', value: parentId}, {field: 'host_id', value: newGroupNameObj.insertId}));
         return `succeeded! groups: '${group.Name}', '${newGroupName}' added`;
     }
 }

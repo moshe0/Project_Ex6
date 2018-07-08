@@ -15,10 +15,15 @@ function GetGroups() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             // Select the last groups
-            let result = yield yield DB_1.DB.AnyQuery(`SELECT id Id, name Name, null Members, parent_id ParentId
-                                                          FROM groups g1 
-                                                          WHERE NOT EXISTS 
-                                                          (SELECT * FROM groups g2 WHERE g1.id = g2.parent_id)`);
+            let result = yield yield DB_1.DB.AnyQuery(`SELECT aa1.id Id, aa1.name Name, null Members, aa1.parent_id ParentId
+                 FROM
+                 	(SELECT id , name, null Members, parent_id
+                 	FROM groups g1 
+                 	WHERE NOT EXISTS (SELECT * FROM groups g2 WHERE g1.id = g2.parent_id)) aa1
+                 WHERE aa1.parent_id not in 
+                 	(SELECT parent_id
+                 	FROM groups g3
+                 	WHERE g3.parent_id IS NOT NULL AND EXISTS (SELECT * FROM groups g4 WHERE g3.id = g4.parent_id))`);
             // Find the user associated to them
             for (let i = 0; i < result.length; i++) {
                 result[i].Members = [];
@@ -30,16 +35,24 @@ function GetGroups() {
             // Build the tree
             for (let i = 0; i < result.length; i++) {
                 if (!!result[i].ParentId) {
+                    let NodeId = yield DB_1.DB.AnyQuery(DB_1.DB.select('id Id', 'groups', { field: 'id', value: result[i].ParentId }), true);
+                    NodeId = NodeId.Id;
                     result.splice(i, 0, yield DB_1.DB.AnyQuery(DB_1.DB.select('id Id, name Name, null Members, parent_id ParentId', 'groups', { field: 'id', value: result[i].ParentId }), true));
                     result[i].Members = [];
                     let children = yield DB_1.DB.AnyQuery(DB_1.DB.select('id Id, name Name, null Members, parent_id ParentId', 'groups', { field: 'parent_id', value: result[i + 1].ParentId }));
-                    let index;
-                    for (let item of children) {
-                        index = result.findIndex(val => val.Id === item.Id);
-                        result[i].Members.push(result[index]);
-                        result.splice(index, 1);
+                    for (let j = 0; j < children.length; j++) {
+                        children[j].Members = [];
                     }
-                    i = i - children.length;
+                    let index;
+                    for (let j = 0; j < children.length; j++) {
+                        index = result.findIndex(val => val.Id === children[j].Id);
+                        if (index !== -1) {
+                            children[j] = Object.assign({}, result[index]);
+                            result.splice(index, 1);
+                        }
+                        result[i].Members.push(children[j]);
+                    }
+                    i = --i;
                 }
             }
             // Erase not necessary properties
@@ -80,8 +93,8 @@ function _AddGroup(group, newGroupName, parentId) {
             if (count[0].count > 0)
                 return `The group '${newGroupName}' already exist`;
             yield DB_1.DB.AnyQuery(DB_1.DB.insert('groups (name, parent_id)', group.Name, parentId));
-            let ee = yield DB_1.DB.AnyQuery(DB_1.DB.insert('groups (name, parent_id)', newGroupName, parentId));
-            yield DB_1.DB.AnyQuery(DB_1.DB.update('members', { field: 'host_id', value: parentId }, ee[0].id));
+            let newGroupNameObj = yield DB_1.DB.AnyQuery(DB_1.DB.insert('groups (name, parent_id)', newGroupName, parentId));
+            yield DB_1.DB.AnyQuery(DB_1.DB.update('members', { field: 'host_id', value: parentId }, { field: 'host_id', value: newGroupNameObj.insertId }));
             return `succeeded! groups: '${group.Name}', '${newGroupName}' added`;
         }
     });
