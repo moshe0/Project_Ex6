@@ -35,8 +35,6 @@ function GetGroups() {
             // Build the tree
             for (let i = 0; i < result.length; i++) {
                 if (!!result[i].ParentId) {
-                    let NodeId = yield DB_1.DB.AnyQuery(DB_1.DB.select('id Id', 'groups', { field: 'id', value: result[i].ParentId }), true);
-                    NodeId = NodeId.Id;
                     result.splice(i, 0, yield DB_1.DB.AnyQuery(DB_1.DB.select('id Id, name Name, null Members, parent_id ParentId', 'groups', { field: 'id', value: result[i].ParentId }), true));
                     result[i].Members = [];
                     let children = yield DB_1.DB.AnyQuery(DB_1.DB.select('id Id, name Name, null Members, parent_id ParentId', 'groups', { field: 'parent_id', value: result[i + 1].ParentId }));
@@ -52,7 +50,7 @@ function GetGroups() {
                         }
                         result[i].Members.push(children[j]);
                     }
-                    i = --i;
+                    --i;
                 }
             }
             // Erase not necessary properties

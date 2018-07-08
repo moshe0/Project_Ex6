@@ -36,16 +36,7 @@ export async function GetGroups(){
 
         // Build the tree
         for(let i=0 ; i < result.length ; i++){
-            if(!!result[i].ParentId){
-                let NodeId : any = await DB.AnyQuery(DB.select('id Id',
-                                                         'groups',
-                                                         {field: 'id', value: result[i].ParentId}), true);
-                NodeId = NodeId.Id;
-                if(HelperBuildTree(result, i+1, NodeId, 0)) {
-                    result.splice(i+1, 1);
-                    --i;
-                    break;
-                }
+            if(!!result[i].ParentId) {
                 result.splice(i, 0, await DB.AnyQuery(DB.select('id Id, name Name, null Members, parent_id ParentId',
                     'groups',
                     {field: 'id', value: result[i].ParentId}), true));
@@ -75,6 +66,17 @@ export async function GetGroups(){
             }
         }
 
+        //union tree nodes
+        for(let i=0 ; i < result.length-1 ; i++){
+            if(result[i].Id === result[i+1].Id) {
+                let result1 = result[i];
+                let result2 = result[i];
+
+                while (result1.Members.length > 0 && result2.Members.length > 0) {
+                }
+            }
+        }
+
         // Erase not necessary properties
         let tmp = JSON.stringify(result, ["Id", "Name", "Members", "Password", "Age"]);
         result = JSON.parse(tmp);
@@ -83,13 +85,6 @@ export async function GetGroups(){
     catch (e) {
         console.log(">>>>>>>>>>>. ERROR", e)
     }
-}
-
-function HelperBuildTree(result :any, copyIndex : number, NodeId : number, i : number) : boolean{
-    let index = result[i].Members.findIndex(item => item.Id = NodeId);
-    if(index > -1)
-
-    return false;
 }
 
 
