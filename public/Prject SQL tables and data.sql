@@ -113,3 +113,19 @@ select *
 from members;
 
 
+# INSERT INTO groups
+# (name, parent_id)
+# VALUES
+# ('No Friends', null),
+# ('Friends', null),
+# ('Best Friends', 1000001),
+# ('Good Friends', 1000002),
+# ('AAA', 1000000),
+# ('BBB', 1000000),
+# ('CC', 1000003),
+# ('DD', 1000003),
+# ('EE', 1000007),
+# ('FF', 1000007),
+# ('E2', 1000006),
+# ('F2', 1000006),
+# ('E3', 1000010);

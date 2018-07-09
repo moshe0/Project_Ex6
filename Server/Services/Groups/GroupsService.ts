@@ -8,7 +8,6 @@ import {DB, db} from "../../DB/DB";
 export async function GetGroups(){
     try {
         // Select the last groups
-
         let result: any = await await DB.AnyQuery
         ( `SELECT aa1.id Id, aa1.name Name, null Members, aa1.parent_id ParentId
                  FROM
@@ -45,23 +44,18 @@ export async function GetGroups(){
                 let children : any = await DB.AnyQuery(DB.select('id Id, name Name, null Members, parent_id ParentId',
                                                            'groups',
                                                            {field: 'parent_id', value: result[i+1].ParentId}));
-
                 for(let j=0 ; j<children.length ; j++){
                     children[j].Members = [];
                 }
-
-
                 let index : number;
                 for(let j=0 ; j<children.length ; j++) {
                     index = result.findIndex(val => val.Id === children[j].Id);
                     if(index !== -1) {
                         children[j] = Object.assign({}, result[index]);
                         result.splice(index, 1);
-
                     }
                     result[i].Members.push(children[j]);
                 }
-
                 --i;
             }
         }
@@ -91,19 +85,12 @@ function BuildTreeHelper(resultA : any, resultB : any){
             return true;
         }
     }
-
     for(let i=0 ; i < resultA.Members.length ; i++){
         if(BuildTreeHelper(resultA.Members[i], resultB.Members[i]) === true)
             return true;
     }
-
     return false;
 }
-
-
-
-
-
 
 
 export function AddGroup(group: any, newGroupName : string, parentId : number){
