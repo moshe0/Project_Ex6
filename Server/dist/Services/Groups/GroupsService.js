@@ -53,6 +53,14 @@ function GetGroups() {
                     --i;
                 }
             }
+            //union tree nodes
+            for (let i = 0; i < result.length - 1; i++)
+                for (let j = i + 1; j < result.length; j++) {
+                    if (result[i].Id === result[j].Id) {
+                        BuildTreeHelper(result[i], result[j]);
+                        result.splice(j, 1);
+                    }
+                }
             // Erase not necessary properties
             let tmp = JSON.stringify(result, ["Id", "Name", "Members", "Password", "Age"]);
             result = JSON.parse(tmp);
@@ -64,6 +72,19 @@ function GetGroups() {
     });
 }
 exports.GetGroups = GetGroups;
+function BuildTreeHelper(resultA, resultB) {
+    for (let i = 0; i < resultA.Members.length; i++) {
+        if (resultA.Members[i].Members.length < resultB.Members[i].Members.length) {
+            resultA.Members[i] = resultB.Members[i];
+            return true;
+        }
+    }
+    for (let i = 0; i < resultA.Members.length; i++) {
+        if (BuildTreeHelper(resultA.Members[i], resultB.Members[i]) === true)
+            return true;
+    }
+    return false;
+}
 function AddGroup(group, newGroupName, parentId) {
     return new Promise((resolve) => {
         let result;

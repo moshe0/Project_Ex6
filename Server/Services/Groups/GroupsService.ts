@@ -67,15 +67,13 @@ export async function GetGroups(){
         }
 
         //union tree nodes
-        for(let i=0 ; i < result.length-1 ; i++){
-            if(result[i].Id === result[i+1].Id) {
-                let result1 = result[i];
-                let result2 = result[i];
-
-                while (result1.Members.length > 0 && result2.Members.length > 0) {
+        for(let i=0 ; i < result.length-1 ; i++)
+            for(let j=i+1 ; j < result.length ; j++) {
+                if (result[i].Id === result[j].Id) {
+                    BuildTreeHelper(result[i], result[j]);
+                    result.splice(j, 1);
                 }
             }
-        }
 
         // Erase not necessary properties
         let tmp = JSON.stringify(result, ["Id", "Name", "Members", "Password", "Age"]);
@@ -86,6 +84,25 @@ export async function GetGroups(){
         console.log(">>>>>>>>>>>. ERROR", e)
     }
 }
+function BuildTreeHelper(resultA : any, resultB : any){
+    for(let i=0 ; i < resultA.Members.length ; i++){
+        if(resultA.Members[i].Members.length < resultB.Members[i].Members.length) {
+            resultA.Members[i] = resultB.Members[i];
+            return true;
+        }
+    }
+
+    for(let i=0 ; i < resultA.Members.length ; i++){
+        if(BuildTreeHelper(resultA.Members[i], resultB.Members[i]) === true)
+            return true;
+    }
+
+    return false;
+}
+
+
+
+
 
 
 
