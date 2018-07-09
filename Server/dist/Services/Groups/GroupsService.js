@@ -15,12 +15,12 @@ function GetGroups() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             // Select the last groups
-            let result = yield yield DB_1.DB.AnyQuery(`SELECT aa1.id Id, aa1.name Name, null Members, aa1.parent_id ParentId
+            let result = yield yield DB_1.DB.AnyQuery(`SELECT endG.id Id, endG.name Name, null Members, endG.parent_id ParentId
                  FROM
                  	(SELECT id , name, null Members, parent_id
                  	FROM groups g1 
-                 	WHERE NOT EXISTS (SELECT * FROM groups g2 WHERE g1.id = g2.parent_id)) aa1
-                 WHERE aa1.parent_id IS NULL OR aa1.parent_id not in 
+                 	WHERE NOT EXISTS (SELECT * FROM groups g2 WHERE g1.id = g2.parent_id)) endG
+                 WHERE endG.parent_id IS NULL OR endG.id not in 
                  	(SELECT parent_id
                  	FROM groups g3
                  	WHERE g3.parent_id IS NOT NULL AND EXISTS (SELECT * FROM groups g4 WHERE g3.id = g4.parent_id))`);
@@ -54,13 +54,15 @@ function GetGroups() {
                 }
             }
             //union tree nodes
-            for (let i = 0; i < result.length - 1; i++)
+            for (let i = 0; i < result.length - 1; i++) {
                 for (let j = i + 1; j < result.length; j++) {
                     if (result[i].Id === result[j].Id) {
                         BuildTreeHelper(result[i], result[j]);
                         result.splice(j, 1);
+                        --j;
                     }
                 }
+            }
             // Erase not necessary properties
             let tmp = JSON.stringify(result, ["Id", "Name", "Members", "Password", "Age"]);
             result = JSON.parse(tmp);
@@ -166,32 +168,19 @@ function _DeleteGroup(id, parentId) {
 }
 function FlatteningGroup(id, parentId) {
     return new Promise((resolve) => {
-        const result = _FlatteningGroup(id, parentId);
+        let result;
+        result = _FlatteningGroup(id, parentId);
         resolve(result);
     });
 }
 exports.FlatteningGroup = FlatteningGroup;
 function _FlatteningGroup(id, parentId) {
-    let name = DB2_1.DB2.Groups.find(item => item.Id === id && MainHelpers_1.GetType(item) === 'group');
-    for (let item of DB2_1.DB2.Groups) {
-        if (_FlatteningGroupItem(id, parentId, item) === 'succeeded')
-            return `succeeded! group '${name}' flatted`;
-    }
-    return 'failed';
-}
-function _FlatteningGroupItem(id, parentId, node) {
-    if (node.Id === parentId) {
-        node.Members = node.Members[0].Members;
-        return DB2_1.DB2.writeFile('Groups');
-    }
-    for (let item of node.Members) {
-        if (MainHelpers_1.GetType(item) === 'user')
-            break;
-        let res = _FlatteningGroupItem(id, parentId, item);
-        if (res === 'succeeded')
-            return res;
-    }
-    return 'failed';
+    return __awaiter(this, void 0, void 0, function* () {
+        let name = yield DB_1.DB.AnyQuery(DB_1.DB.select('name', 'groups', { field: 'id', value: id }));
+        yield DB_1.DB.AnyQuery(DB_1.DB.delete('groups', { field: 'id', value: id }));
+        yield DB_1.DB.AnyQuery(DB_1.DB.update('members', { field: 'host_id', value: id }, { field: 'host_id', value: parentId }));
+        return `succeeded! group '${name[0].name}' flatted`;
+    });
 }
 function AddUserToExistingGroup(userName, parentId) {
     return new Promise((resolve) => {
@@ -220,7 +209,7 @@ function _AddUserToExistingGroupItem(user, node, parentId) {
     let res = '';
     if (node.Id === parentId) {
         if (node.Members.find(item => item.Name === user.Name && MainHelpers_1.GetType(item) === 'user')) {
-            return `failed! user '${user.Name}' already exis`;
+            return `failed! user '${user.Name}' already exist`;
         }
         node.Members.push(user);
         return DB2_1.DB2.writeFile('Groups');

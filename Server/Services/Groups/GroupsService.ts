@@ -9,48 +9,48 @@ export async function GetGroups(){
     try {
         // Select the last groups
         let result: any = await await DB.AnyQuery
-        ( `SELECT aa1.id Id, aa1.name Name, null Members, aa1.parent_id ParentId
+        (`SELECT endG.id Id, endG.name Name, null Members, endG.parent_id ParentId
                  FROM
                  	(SELECT id , name, null Members, parent_id
                  	FROM groups g1 
-                 	WHERE NOT EXISTS (SELECT * FROM groups g2 WHERE g1.id = g2.parent_id)) aa1
-                 WHERE aa1.parent_id IS NULL OR aa1.parent_id not in 
+                 	WHERE NOT EXISTS (SELECT * FROM groups g2 WHERE g1.id = g2.parent_id)) endG
+                 WHERE endG.parent_id IS NULL OR endG.id not in 
                  	(SELECT parent_id
                  	FROM groups g3
                  	WHERE g3.parent_id IS NOT NULL AND EXISTS (SELECT * FROM groups g4 WHERE g3.id = g4.parent_id))`);
 
 
         // Find the user associated to them
-        for(let i=0 ; i < result.length ; i++){
+        for (let i = 0; i < result.length; i++) {
             result[i].Members = [];
             let members: any = await DB.AnyQuery(DB.select('*',
-                                                           'members',
-                                                           {field : 'host_id', value : result[i].Id}));
-            for(let item of members) {
+                'members',
+                {field: 'host_id', value: result[i].Id}));
+            for (let item of members) {
                 result[i].Members.push(await DB.AnyQuery(DB.select('id Id, name Name, password Password, age Age',
-                                                                   'users',
-                                                                   {field: 'id', value: item.user_id}), true));
+                    'users',
+                    {field: 'id', value: item.user_id}), true));
             }
         }
 
         // Build the tree
-        for(let i=0 ; i < result.length ; i++){
-            if(!!result[i].ParentId) {
+        for (let i = 0; i < result.length; i++) {
+            if (!!result[i].ParentId) {
                 result.splice(i, 0, await DB.AnyQuery(DB.select('id Id, name Name, null Members, parent_id ParentId',
                     'groups',
                     {field: 'id', value: result[i].ParentId}), true));
                 result[i].Members = [];
 
-                let children : any = await DB.AnyQuery(DB.select('id Id, name Name, null Members, parent_id ParentId',
-                                                           'groups',
-                                                           {field: 'parent_id', value: result[i+1].ParentId}));
-                for(let j=0 ; j<children.length ; j++){
+                let children: any = await DB.AnyQuery(DB.select('id Id, name Name, null Members, parent_id ParentId',
+                    'groups',
+                    {field: 'parent_id', value: result[i + 1].ParentId}));
+                for (let j = 0; j < children.length; j++) {
                     children[j].Members = [];
                 }
-                let index : number;
-                for(let j=0 ; j<children.length ; j++) {
+                let index: number;
+                for (let j = 0; j < children.length; j++) {
                     index = result.findIndex(val => val.Id === children[j].Id);
-                    if(index !== -1) {
+                    if (index !== -1) {
                         children[j] = Object.assign({}, result[index]);
                         result.splice(index, 1);
                     }
@@ -61,13 +61,15 @@ export async function GetGroups(){
         }
 
         //union tree nodes
-        for(let i=0 ; i < result.length-1 ; i++)
-            for(let j=i+1 ; j < result.length ; j++) {
+        for (let i = 0; i < result.length - 1; i++) {
+            for (let j = i + 1; j < result.length; j++) {
                 if (result[i].Id === result[j].Id) {
                     BuildTreeHelper(result[i], result[j]);
                     result.splice(j, 1);
+                    --j;
                 }
             }
+        }
 
         // Erase not necessary properties
         let tmp = JSON.stringify(result, ["Id", "Name", "Members", "Password", "Age"]);
@@ -138,8 +140,6 @@ async function _AddGroupDirectSon(group: any, parentId : number){
 }
 
 
-
-
 export function DeleteGroup(id: number, parentId : number){
     return new Promise((resolve) => {
         let result : Promise<string>;
@@ -191,33 +191,19 @@ async function _DeleteGroup(id: number, parentId : number) {
 
 export function FlatteningGroup(id: number, parentId : number){
     return new Promise((resolve) => {
-        const result = _FlatteningGroup(id, parentId);
+        let result : Promise<string>;
+        result = _FlatteningGroup(id, parentId);
         resolve(result);
     });
 }
-function _FlatteningGroup(id: number, parentId : number){
-    let name = DB2.Groups.find(item => item.Id === id  && GetType(item) === 'group');
-    for(let item of DB2.Groups){
-        if(_FlatteningGroupItem(id, parentId, item) === 'succeeded')
-            return `succeeded! group '${name}' flatted`;
-    }
-    return 'failed';
+async function _FlatteningGroup(id: number, parentId : number) {
+    let name = await DB.AnyQuery(DB.select('name',
+        'groups',
+        {field: 'id', value: id}));
+    await DB.AnyQuery(DB.delete('groups', {field: 'id', value: id}));
+    await DB.AnyQuery(DB.update('members', {field: 'host_id', value: id}, {field: 'host_id', value: parentId}));
+    return `succeeded! group '${name[0].name}' flatted`;
 }
-function _FlatteningGroupItem(id : number, parentId : number, node : Group){
-    if(node.Id === parentId) {
-        node.Members = node.Members[0].Members;
-        return DB2.writeFile('Groups');
-    }
-    for(let item of node.Members) {
-        if(GetType(item) === 'user')
-            break;
-        let res = _FlatteningGroupItem(id, parentId, item);
-        if(res === 'succeeded')
-            return res;
-    }
-    return 'failed';
-}
-
 
 
 
@@ -249,7 +235,7 @@ function _AddUserToExistingGroupItem(user: User, node : Group, parentId : number
 
     if(node.Id === parentId) {
         if (node.Members.find(item => item.Name === user.Name && GetType(item) === 'user')) {
-            return `failed! user '${user.Name}' already exis`;
+            return `failed! user '${user.Name}' already exist`;
         }
         node.Members.push(user);
         return DB2.writeFile('Groups');

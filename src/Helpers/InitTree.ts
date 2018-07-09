@@ -359,9 +359,11 @@ export class InitTree {
                         indexCurrent++;
                 }
                 else {
-                    for(let i=1 ; !($(prevData[indexPrev - i]).hasClass('inFocus')) && (indexPrev - i) >= 0 ; i++) {
-                        if (prevData[indexPrev - i].style.textIndent === currentData[indexCurrent].style.textIndent)
-                            $(currentData[indexCurrent]).attr('class', prevData[indexPrev - i].classList);
+                    if($(currentData[indexCurrent]).hasClass('group')) {
+                        for (let i = 1; !($(prevData[indexPrev - i]).hasClass('inFocus')) && (indexPrev - i) >= 0; i++) {
+                            if (prevData[indexPrev - i].style.textIndent === currentData[indexCurrent].style.textIndent)
+                                $(currentData[indexCurrent]).attr('class', prevData[indexPrev - i].classList);
+                        }
                     }
                     indexCurrent++;
                 }

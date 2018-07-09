@@ -27,7 +27,7 @@ export class AppService {
             return user;
         }
         catch (e) {
-            console.log('GetSpecificUser FAILD');
+            console.log('GetSpecificUser FAILED');
             return null;
         }
     }
@@ -37,14 +37,6 @@ export class AppService {
             const ObjGroups= await GetGroups();
             console.log(ObjGroups);
             const ObjUsers = await GetUsers();
-            /*
-            for(let i=0 ; i<ObjUsers.length ; i++){
-                ObjUsers[i] = RenameProp('age', 'Age', ObjUsers[i]);
-                ObjUsers[i] = RenameProp('password', 'Password', ObjUsers[i]);
-                ObjUsers[i] = RenameProp('name', 'Name', ObjUsers[i]);
-                ObjUsers[i] = RenameProp('id', 'Id', ObjUsers[i]);
-            }
-            */
             console.log(ObjUsers);
 
             let data : any[] = [];
@@ -55,7 +47,7 @@ export class AppService {
             return data;
         }
         catch (e) {
-            console.log('GetData FAILD');
+            console.log('GetData FAILED');
             return null;
         }
     }
@@ -70,7 +62,7 @@ export class AppService {
             return ObjMessages;
         }
         catch (e) {
-            console.log('GetMessages FAILD');
+            console.log('GetMessages FAILED');
             return null;
         }
     }
@@ -82,7 +74,7 @@ export class AppService {
             return ObjMessages;
         }
         catch (e) {
-            console.log('AddMessage FAILD');
+            console.log('AddMessage FAILED');
             return null;
         }
     }
@@ -94,7 +86,7 @@ export class AppService {
             return ObjUser;
         }
         catch (e) {
-            console.log('AddUser FAILD');
+            console.log('AddUser FAILED');
             return null;
         }
     }
@@ -106,7 +98,7 @@ export class AppService {
             return ObjGroup;
         }
         catch (e) {
-            console.log('AddGroup FAILD');
+            console.log('AddGroup FAILED');
             return null;
         }
     }
@@ -118,7 +110,7 @@ export class AppService {
             return ObjGroup;
         }
         catch (e) {
-            console.log('AddUserToExistingGroup FAILD');
+            console.log('AddUserToExistingGroup FAILED');
             return null;
         }
     }
@@ -130,7 +122,7 @@ export class AppService {
             return ObjGroup;
         }
         catch (e) {
-            console.log('DeleteUserFromGroup FAILD');
+            console.log('DeleteUserFromGroup FAILED');
             return null;
         }
     }
@@ -142,7 +134,7 @@ export class AppService {
             return ObjGroup;
         }
         catch (e) {
-            console.log('FlatteningGroup FAILD');
+            console.log('FlatteningGroup FAILED');
             return null;
         }
     }
@@ -154,7 +146,7 @@ export class AppService {
             return ObjGroup;
         }
         catch (e) {
-            console.log('DeleteGroup FAILD');
+            console.log('DeleteGroup FAILED');
             return null;
         }
     }
@@ -166,7 +158,7 @@ export class AppService {
             return ObjUser;
         }
         catch (e) {
-            console.log('UpdateUser FAILD');
+            console.log('UpdateUser FAILED');
             return null;
         }
     }
@@ -178,7 +170,7 @@ export class AppService {
             return ObjUser;
         }
         catch (e) {
-            console.log('DeleteUser FAILD');
+            console.log('DeleteUser FAILED');
             return null;
         }
     }
