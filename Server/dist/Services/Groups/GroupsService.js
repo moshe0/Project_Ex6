@@ -184,55 +184,40 @@ function _FlatteningGroup(id, parentId) {
 }
 function AddUserToExistingGroup(userName, parentId) {
     return new Promise((resolve) => {
-        let result = '';
-        let user = DB2_1.DB2.Users.find(item => item.Name === userName);
-        if (!user)
-            result = `failed! user '${userName}' not exist`;
-        else
-            result = _AddUserToExistingGroup(user, parentId);
+        let result;
+        result = _AddUserToExistingGroup(userName, parentId);
         resolve(result);
     });
 }
 exports.AddUserToExistingGroup = AddUserToExistingGroup;
-function _AddUserToExistingGroup(user, parentId) {
-    let res = '';
-    for (let item of DB2_1.DB2.Groups) {
-        res = _AddUserToExistingGroupItem(user, item, parentId);
-        if (res === 'succeeded')
-            return `succeeded! user '${user.Name}' added to group`;
-        else if (res !== '')
-            return res;
-    }
-    return 'failed';
-}
-function _AddUserToExistingGroupItem(user, node, parentId) {
-    let res = '';
-    if (node.Id === parentId) {
-        if (node.Members.find(item => item.Name === user.Name && MainHelpers_1.GetType(item) === 'user')) {
-            return `failed! user '${user.Name}' already exist`;
-        }
-        node.Members.push(user);
-        return DB2_1.DB2.writeFile('Groups');
-    }
-    for (let item of node.Members) {
-        if (MainHelpers_1.GetType(item) === 'user')
-            break;
-        let res = _AddUserToExistingGroupItem(user, item, parentId);
-        if (res === 'succeeded')
-            return res;
-        else if (res !== '')
-            return res;
-    }
-    return res;
+function _AddUserToExistingGroup(userName, parentId) {
+    return __awaiter(this, void 0, void 0, function* () {
+        let user = yield DB_1.DB.AnyQuery(DB_1.DB.select('*', 'users', { field: 'name', value: userName }), true);
+        if (!user)
+            return `failed! user '${userName}' not exist`;
+        let count = yield DB_1.DB.AnyQuery(DB_1.DB.select('count(*) count', 'members', { field: 'host_id', value: parentId }, { field: 'user_id', value: user.id }), true);
+        if (count.count > 0)
+            return `failed! user '${userName}' already exist`;
+        yield DB_1.DB.AnyQuery(DB_1.DB.insert('members (host_id, user_id)', parentId, user.id));
+        return `succeeded! user '${userName}' added to group`;
+    });
 }
 function DeleteUserFromGroup(userId, parentId) {
     return new Promise((resolve) => {
-        const user = DB2_1.DB2.Users.find(item => item.Id === userId);
-        const result = _DeleteUserFromGroup(user.Name, parentId);
+        const result = _DeleteUserFromGroup22(userId, parentId);
         resolve(result);
     });
 }
 exports.DeleteUserFromGroup = DeleteUserFromGroup;
+function _DeleteUserFromGroup22(userId, parentId) {
+    return __awaiter(this, void 0, void 0, function* () {
+        let user = yield DB_1.DB.AnyQuery(DB_1.DB.select('*', 'users', { field: 'id', value: userId }), true);
+        if (!user)
+            return `failed! user '${user.name}' not exist`;
+        yield DB_1.DB.AnyQuery(DB_1.DB.delete('members', { field: 'host_id', value: parentId }, { field: 'user_id', value: userId }));
+        return `succeeded! user '${user.name}' deleted from group`;
+    });
+}
 function _DeleteUserFromGroup(userName, parentId) {
     for (let item of DB2_1.DB2.Groups) {
         if (_DeleteUserFromGroupItem(userName, parentId, item) === 'succeeded')

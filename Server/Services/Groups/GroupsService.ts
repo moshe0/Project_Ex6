@@ -188,7 +188,6 @@ async function _DeleteGroup(id: number, parentId : number) {
 }
 
 
-
 export function FlatteningGroup(id: number, parentId : number){
     return new Promise((resolve) => {
         let result : Promise<string>;
@@ -210,78 +209,35 @@ async function _FlatteningGroup(id: number, parentId : number) {
 
 export function AddUserToExistingGroup(userName: string, parentId : number){
     return new Promise((resolve) => {
-        let result = '';
-        let user = DB2.Users.find(item => item.Name === userName);
-        if(!user)
-            result = `failed! user '${userName}' not exist`;
-        else
-            result = _AddUserToExistingGroup(user, parentId);
+        let result: Promise<string>;
+        result = _AddUserToExistingGroup(userName, parentId);
         resolve(result);
     });
 }
-function _AddUserToExistingGroup(user: User, parentId : number){
-    let res = '';
-    for(let item of DB2.Groups){
-        res = _AddUserToExistingGroupItem(user, item, parentId);
-        if(res === 'succeeded')
-            return `succeeded! user '${user.Name}' added to group`;
-        else if(res !== '')
-            return res;
-    }
-    return 'failed';
-}
-function _AddUserToExistingGroupItem(user: User, node : Group, parentId : number){
-    let res = '';
-
-    if(node.Id === parentId) {
-        if (node.Members.find(item => item.Name === user.Name && GetType(item) === 'user')) {
-            return `failed! user '${user.Name}' already exist`;
-        }
-        node.Members.push(user);
-        return DB2.writeFile('Groups');
-    }
-    for(let item of node.Members) {
-        if(GetType(item) === 'user')
-            break;
-        let res = _AddUserToExistingGroupItem(user, item, parentId);
-        if(res === 'succeeded')
-            return res;
-        else if(res !== '')
-            return res;
-    }
-    return res;
+async function _AddUserToExistingGroup(userName: string, parentId : number) {
+    let user : any = await DB.AnyQuery(DB.select('*', 'users', {field : 'name', value : userName}), true);
+    if(!user)
+        return `failed! user '${userName}' not exist`;
+    let count : any = await DB.AnyQuery(DB.select('count(*) count', 'members', {field : 'host_id', value : parentId},{field : 'user_id', value : user.id}), true);
+    if(count.count > 0)
+        return `failed! user '${userName}' already exist`;
+    await DB.AnyQuery(DB.insert('members (host_id, user_id)', parentId, user.id));
+    return `succeeded! user '${userName}' added to group`;
 }
 
 
 export function DeleteUserFromGroup(userId : number, parentId : number){
     return new Promise((resolve) => {
-        const user = DB2.Users.find(item => item.Id === userId);
-        const result = _DeleteUserFromGroup(user.Name, parentId);
+        const result = _DeleteUserFromGroup(userId, parentId);
         resolve(result);
     });
 }
-function _DeleteUserFromGroup(userName : string, parentId : number){
-    for(let item of DB2.Groups){
-        if(_DeleteUserFromGroupItem(userName, parentId, item) === 'succeeded')
-            return `succeeded! user '${userName}' deleted from group`;
-    }
-    return 'failed';
-}
-function _DeleteUserFromGroupItem(userName : string, parentId : number, node : Group){
-    if(node.Id === parentId) {
-        let index = node.Members.findIndex(item => item.Name === userName && GetType(item) === 'user');
-        if (index === -1) {
-            return 'failed';
-        }
-        node.Members.splice(index, 1);
-        return DB2.writeFile('Groups');
-    }
-    for(let item of node.Members) {
-        if(GetType(item) === 'user')
-            break;
-        let res = _DeleteUserFromGroupItem(userName, parentId, item);
-        if(res === 'succeeded')
-            return res;
-    }
-    return 'failed';
+
+async function _DeleteUserFromGroup(userId : number, parentId : number){
+    let user : any = await DB.AnyQuery(DB.select('*', 'users', {field : 'id', value : userId}), true);
+    if(!user)
+        return `failed! user '${user.name}' not exist`;
+    await DB.AnyQuery(DB.delete('members', {field: 'host_id', value: parentId}, {field: 'user_id', value: userId}));
+    return `succeeded! user '${user.name}' deleted from group`;
+
 }
