@@ -8,8 +8,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const DB2_1 = require("../../DB/DB2");
-const MainHelpers_1 = require("../../Helpers/MainHelpers");
 const DB_1 = require("../../DB/DB");
 function GetGroups() {
     return __awaiter(this, void 0, void 0, function* () {
@@ -204,12 +202,12 @@ function _AddUserToExistingGroup(userName, parentId) {
 }
 function DeleteUserFromGroup(userId, parentId) {
     return new Promise((resolve) => {
-        const result = _DeleteUserFromGroup22(userId, parentId);
+        const result = _DeleteUserFromGroup(userId, parentId);
         resolve(result);
     });
 }
 exports.DeleteUserFromGroup = DeleteUserFromGroup;
-function _DeleteUserFromGroup22(userId, parentId) {
+function _DeleteUserFromGroup(userId, parentId) {
     return __awaiter(this, void 0, void 0, function* () {
         let user = yield DB_1.DB.AnyQuery(DB_1.DB.select('*', 'users', { field: 'id', value: userId }), true);
         if (!user)
@@ -217,30 +215,5 @@ function _DeleteUserFromGroup22(userId, parentId) {
         yield DB_1.DB.AnyQuery(DB_1.DB.delete('members', { field: 'host_id', value: parentId }, { field: 'user_id', value: userId }));
         return `succeeded! user '${user.name}' deleted from group`;
     });
-}
-function _DeleteUserFromGroup(userName, parentId) {
-    for (let item of DB2_1.DB2.Groups) {
-        if (_DeleteUserFromGroupItem(userName, parentId, item) === 'succeeded')
-            return `succeeded! user '${userName}' deleted from group`;
-    }
-    return 'failed';
-}
-function _DeleteUserFromGroupItem(userName, parentId, node) {
-    if (node.Id === parentId) {
-        let index = node.Members.findIndex(item => item.Name === userName && MainHelpers_1.GetType(item) === 'user');
-        if (index === -1) {
-            return 'failed';
-        }
-        node.Members.splice(index, 1);
-        return DB2_1.DB2.writeFile('Groups');
-    }
-    for (let item of node.Members) {
-        if (MainHelpers_1.GetType(item) === 'user')
-            break;
-        let res = _DeleteUserFromGroupItem(userName, parentId, item);
-        if (res === 'succeeded')
-            return res;
-    }
-    return 'failed';
 }
 //# sourceMappingURL=GroupsService.js.map

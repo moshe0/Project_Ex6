@@ -9,7 +9,6 @@ import {
     GetUsers, UpdateUser
 } from "./ServiceApi";
 import {User} from "./Models/User";
-// import {RenameProp} from "./Helpers/MainHelpers";
 
 
 export class AppService {
