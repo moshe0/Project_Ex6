@@ -14,7 +14,7 @@ export async function GetGroups(){
                  	(SELECT id , name, null Members, parent_id
                  	FROM groups g1 
                  	WHERE NOT EXISTS (SELECT * FROM groups g2 WHERE g1.id = g2.parent_id)) aa1
-                 WHERE aa1.parent_id not in 
+                 WHERE aa1.parent_id IS NULL OR aa1.parent_id not in 
                  	(SELECT parent_id
                  	FROM groups g3
                  	WHERE g3.parent_id IS NOT NULL AND EXISTS (SELECT * FROM groups g4 WHERE g3.id = g4.parent_id))`);
@@ -142,15 +142,66 @@ async function _AddGroupDirectSon(group: any, parentId : number){
 
 export function DeleteGroup(id: number, parentId : number){
     return new Promise((resolve) => {
-        let result = '';
-        if(parentId === -1)
-            result = _DeleteGroupDirectSon(id, parentId);
-        else
-            result = _DeleteGroup(id, parentId);
+        let result : Promise<string>;
+        result = _DeleteGroup22(id, parentId);
+        // if(parentId === -1)
+        //     result = _DeleteGroupDirectSon(id, parentId);
+        // else
+        //     result = _DeleteGroup(id, parentId);
         resolve(result);
     });
 }
-function _DeleteGroup(id: number, parentId : number){
+async function _DeleteGroup22(id: number, parentId : number) {
+    let count = await DB.AnyQuery(DB.select('COUNT(*) count',
+        'members',
+        {field: 'host_id', value: id}));
+
+    let deleteGroup = await DB.AnyQuery(DB.select('name, parent_id',
+        'groups',
+        {field: 'id', value: id}));
+    // if children are users
+    if (count[0].count > 0) {
+        await DB.AnyQuery(DB.delete('members', {field: 'host_id', value: id}));
+        await DB.AnyQuery(DB.delete('groups', {field: 'id', value: id}));
+        return `succeeded! group '${deleteGroup[0].name}' deleted`;
+    }
+
+    // if children are groups
+    let children : any = await DB.AnyQuery(DB.select('*',
+        'groups',
+        {field: 'parent_id', value: id}));
+
+    // take deleteGroup children
+    if(children.length === 0){
+        await DB.AnyQuery(DB.delete('groups', {field: 'id', value: id}));
+        return `succeeded! group '${deleteGroup[0].name}' deleted`;
+    }
+
+    if(deleteGroup[0].parent_id === null) {
+        for (let item of children) {
+
+
+        }
+        await DB.AnyQuery(DB.update('groups', {field: 'parent_id', value: id}, {field: 'parent_id', value: null}));
+    }
+    else{
+        for (let item of children) {
+
+
+        }
+        await DB.AnyQuery(DB.update('groups', {field: 'parent_id', value: id}, {field: 'parent_id', value: parentId}));
+    }
+    return `succeeded! group '${deleteGroup[0].name}' deleted`;
+}
+
+
+
+
+
+
+
+
+async function _DeleteGroup(id: number, parentId : number){
     let res = '';
     for(let item of DB2.Groups){
         res = _DeleteGroupItem(id, parentId, item);
@@ -161,7 +212,7 @@ function _DeleteGroup(id: number, parentId : number){
     }
     return 'failed';
 }
-function _DeleteGroupItem(id : number, parentId : number, node : Group){
+async function _DeleteGroupItem(id : number, parentId : number, node : Group){
     let res = '';
 
     if(node.Id === parentId) {
@@ -198,7 +249,7 @@ function _DeleteGroupItem(id : number, parentId : number, node : Group){
     }
     return res;
 }
-function _DeleteGroupDirectSon(id : number, parentId : number){
+async function _DeleteGroupDirectSon(id : number, parentId : number){
     let index = DB2.Groups.findIndex(item => item.Id === id && GetType(item) === 'group');
     if (index === -1)
         return 'failed! item selected not found';
