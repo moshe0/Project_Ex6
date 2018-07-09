@@ -25,28 +25,28 @@ function AddGroup(req, res) {
 exports.AddGroup = AddGroup;
 function DeleteGroup(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
-        const result = yield services.GroupsService.DeleteGroup(req.params['id'], req.params['parentId']);
+        const result = yield services.GroupsService.DeleteGroup(parseInt(req.params['id']), parseInt(req.params['parentId']));
         res.json(result);
     });
 }
 exports.DeleteGroup = DeleteGroup;
 function FlatteningGroup(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
-        const result = yield services.GroupsService.FlatteningGroup(req.params['id'], req.params['parentId']);
+        const result = yield services.GroupsService.FlatteningGroup(parseInt(req.params['id']), parseInt(req.params['parentId']));
         res.json(result);
     });
 }
 exports.FlatteningGroup = FlatteningGroup;
 function AddUserToExistingGroup(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
-        const result = yield services.GroupsService.AddUserToExistingGroup(req.body['userName'].userName, req.body['parentId'].parentId);
+        const result = yield services.GroupsService.AddUserToExistingGroup(req.body['userName'].userName, parseInt(req.body['parentId'].parentId));
         res.json(result);
     });
 }
 exports.AddUserToExistingGroup = AddUserToExistingGroup;
 function DeleteUserFromGroup(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
-        const result = yield services.GroupsService.DeleteUserFromGroup(req.params['userId'], req.params['parentId']);
+        const result = yield services.GroupsService.DeleteUserFromGroup(parseInt(req.params['userId']), parseInt(req.params['parentId']));
         res.json(result);
     });
 }

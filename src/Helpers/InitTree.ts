@@ -358,8 +358,13 @@ export class InitTree {
                         indexPrev++;
                         indexCurrent++;
                 }
-                else
-                    indexPrev++;
+                else {
+                    for(let i=1 ; !($(prevData[indexPrev - i]).hasClass('inFocus')) && (indexPrev - i) >= 0 ; i++) {
+                        if (prevData[indexPrev - i].style.textIndent === currentData[indexCurrent].style.textIndent)
+                            $(currentData[indexCurrent]).attr('class', prevData[indexPrev - i].classList);
+                    }
+                    indexCurrent++;
+                }
             }
         }
         else if (prevData.length < currentData.length) { // in case of Add

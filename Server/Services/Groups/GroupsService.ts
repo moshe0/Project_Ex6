@@ -143,15 +143,13 @@ async function _AddGroupDirectSon(group: any, parentId : number){
 export function DeleteGroup(id: number, parentId : number){
     return new Promise((resolve) => {
         let result : Promise<string>;
-        result = _DeleteGroup22(id, parentId);
-        // if(parentId === -1)
-        //     result = _DeleteGroupDirectSon(id, parentId);
-        // else
-        //     result = _DeleteGroup(id, parentId);
+        if(parentId === -1)
+            parentId = null;
+        result = _DeleteGroup(id, parentId);
         resolve(result);
     });
 }
-async function _DeleteGroup22(id: number, parentId : number) {
+async function _DeleteGroup(id: number, parentId : number) {
     let count = await DB.AnyQuery(DB.select('COUNT(*) count',
         'members',
         {field: 'host_id', value: id}));
@@ -167,109 +165,28 @@ async function _DeleteGroup22(id: number, parentId : number) {
     }
 
     // if children are groups
-    let children : any = await DB.AnyQuery(DB.select('*',
+    let children: any = await DB.AnyQuery(DB.select('*',
         'groups',
         {field: 'parent_id', value: id}));
 
     // take deleteGroup children
-    if(children.length === 0){
+    if (children.length === 0) {
         await DB.AnyQuery(DB.delete('groups', {field: 'id', value: id}));
         return `succeeded! group '${deleteGroup[0].name}' deleted`;
     }
 
-    if(deleteGroup[0].parent_id === null) {
-        for (let item of children) {
-
-
-        }
-        await DB.AnyQuery(DB.update('groups', {field: 'parent_id', value: id}, {field: 'parent_id', value: null}));
+    for (let item of children) {
+        let brothers = await DB.AnyQuery(DB.select('COUNT(*) count',
+            'groups',
+            {field: 'parent_id', value: parentId}, {field: 'name', value: item.name}));
+        if (brothers[0].count > 0)
+            return `failed! same name in one of members in '${deleteGroup[0].name}' and in is brothers`;
     }
-    else{
-        for (let item of children) {
-
-
-        }
-        await DB.AnyQuery(DB.update('groups', {field: 'parent_id', value: id}, {field: 'parent_id', value: parentId}));
-    }
+    await DB.AnyQuery(DB.update('groups', {field: 'parent_id', value: id}, {field: 'parent_id', value: parentId}));
+    await DB.AnyQuery(DB.delete('groups', {field: 'id', value: id}));
     return `succeeded! group '${deleteGroup[0].name}' deleted`;
 }
 
-
-
-
-
-
-
-
-async function _DeleteGroup(id: number, parentId : number){
-    let res = '';
-    for(let item of DB2.Groups){
-        res = _DeleteGroupItem(id, parentId, item);
-        if(res === 'succeeded')
-            return res;
-        else if(res !== '')
-            return res;
-    }
-    return 'failed';
-}
-async function _DeleteGroupItem(id : number, parentId : number, node : Group){
-    let res = '';
-
-    if(node.Id === parentId) {
-        let index = node.Members.findIndex(item => item.Id === id && GetType(item) === 'group');
-        if (index === -1)
-            return 'failed! group not found';
-
-        if(node.Members[index].Members.length === 0 || GetType(node.Members[index].Members[0]) === 'user') {
-            let name = node.Members[index].Name;
-            node.Members.splice(index, 1);
-            DB2.writeFile('Groups');
-            return `succeeded! group '${name}' deleted`;
-        }
-
-        for(let elem of node.Members[index].Members) {
-            let indexName = node.Members.findIndex(item => item.Name === elem.Name && GetType(item) === 'group' && item.Name !== node.Members[index].Name);
-            if (indexName > -1)
-                return `failed! same name in one of members in '${node.Members[index].Name}' and in is brothers`;
-        }
-
-        let name = node.Members[index].Name;
-        node.Members.splice(index, 1, ...node.Members[index].Members);
-        DB2.writeFile('Groups');
-        return `succeeded! group '${name}' deleted`;
-    }
-    for(let item of node.Members) {
-        if(GetType(item) === 'user')
-            break;
-        let res = _DeleteGroupItem(id, parentId, item);
-        if(res === 'succeeded')
-            return res;
-        else if(res != '')
-            return res;
-    }
-    return res;
-}
-async function _DeleteGroupDirectSon(id : number, parentId : number){
-    let index = DB2.Groups.findIndex(item => item.Id === id && GetType(item) === 'group');
-    if (index === -1)
-        return 'failed! item selected not found';
-
-    if(DB2.Groups[index].Members.length === 0 || GetType(DB2.Groups[index].Members[0]) === 'user') {
-        DB2.Groups.splice(index, 1);
-        return DB2.writeFile('Groups');
-    }
-
-    for(let elem of DB2.Groups[index].Members) {
-        let indexName = DB2.Groups.findIndex(item => item.Name === elem.Name && GetType(item) === 'group' && item.Name !== DB2.Groups[index].Name);
-        if (indexName > -1)
-            return `failed! same name in one of members in '${DB2.Groups[index].Name}' and in is brothers`;
-    }
-
-    let name = DB2.Groups[index].Name;
-    DB2.Groups.splice(index, 1, ...DB2.Groups[index].Members);
-    DB2.writeFile('Groups');
-    return `succeeded! group '${name}' deleted`;
-}
 
 
 export function FlatteningGroup(id: number, parentId : number){

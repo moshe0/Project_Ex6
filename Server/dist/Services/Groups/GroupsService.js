@@ -130,99 +130,38 @@ function _AddGroupDirectSon(group, parentId) {
 function DeleteGroup(id, parentId) {
     return new Promise((resolve) => {
         let result;
-        result = _DeleteGroup22(id, parentId);
-        // if(parentId === -1)
-        //     result = _DeleteGroupDirectSon(id, parentId);
-        // else
-        //     result = _DeleteGroup(id, parentId);
+        if (parentId === -1)
+            parentId = null;
+        result = _DeleteGroup(id, parentId);
         resolve(result);
     });
 }
 exports.DeleteGroup = DeleteGroup;
-function _DeleteGroup22(id, parentId) {
+function _DeleteGroup(id, parentId) {
     return __awaiter(this, void 0, void 0, function* () {
         let count = yield DB_1.DB.AnyQuery(DB_1.DB.select('COUNT(*) count', 'members', { field: 'host_id', value: id }));
-        let name = yield DB_1.DB.AnyQuery(DB_1.DB.select('name', 'groups', { field: 'id', value: id }));
+        let deleteGroup = yield DB_1.DB.AnyQuery(DB_1.DB.select('name, parent_id', 'groups', { field: 'id', value: id }));
         // if children are users
         if (count[0].count > 0) {
             yield DB_1.DB.AnyQuery(DB_1.DB.delete('members', { field: 'host_id', value: id }));
             yield DB_1.DB.AnyQuery(DB_1.DB.delete('groups', { field: 'id', value: id }));
-            return `succeeded! group '${name[0].name}' deleted`;
+            return `succeeded! group '${deleteGroup[0].name}' deleted`;
         }
         // if children are groups
         let children = yield DB_1.DB.AnyQuery(DB_1.DB.select('*', 'groups', { field: 'parent_id', value: id }));
+        // take deleteGroup children
         if (children.length === 0) {
             yield DB_1.DB.AnyQuery(DB_1.DB.delete('groups', { field: 'id', value: id }));
-            return `succeeded! group '${name[0].name}' deleted`;
+            return `succeeded! group '${deleteGroup[0].name}' deleted`;
         }
-    });
-}
-function _DeleteGroup(id, parentId) {
-    return __awaiter(this, void 0, void 0, function* () {
-        let res = '';
-        for (let item of DB2_1.DB2.Groups) {
-            res = _DeleteGroupItem(id, parentId, item);
-            if (res === 'succeeded')
-                return res;
-            else if (res !== '')
-                return res;
+        for (let item of children) {
+            let brothers = yield DB_1.DB.AnyQuery(DB_1.DB.select('COUNT(*) count', 'groups', { field: 'parent_id', value: parentId }, { field: 'name', value: item.name }));
+            if (brothers[0].count > 0)
+                return `failed! same name in one of members in '${deleteGroup[0].name}' and in is brothers`;
         }
-        return 'failed';
-    });
-}
-function _DeleteGroupItem(id, parentId, node) {
-    return __awaiter(this, void 0, void 0, function* () {
-        let res = '';
-        if (node.Id === parentId) {
-            let index = node.Members.findIndex(item => item.Id === id && MainHelpers_1.GetType(item) === 'group');
-            if (index === -1)
-                return 'failed! group not found';
-            if (node.Members[index].Members.length === 0 || MainHelpers_1.GetType(node.Members[index].Members[0]) === 'user') {
-                let name = node.Members[index].Name;
-                node.Members.splice(index, 1);
-                DB2_1.DB2.writeFile('Groups');
-                return `succeeded! group '${name}' deleted`;
-            }
-            for (let elem of node.Members[index].Members) {
-                let indexName = node.Members.findIndex(item => item.Name === elem.Name && MainHelpers_1.GetType(item) === 'group' && item.Name !== node.Members[index].Name);
-                if (indexName > -1)
-                    return `failed! same name in one of members in '${node.Members[index].Name}' and in is brothers`;
-            }
-            let name = node.Members[index].Name;
-            node.Members.splice(index, 1, ...node.Members[index].Members);
-            DB2_1.DB2.writeFile('Groups');
-            return `succeeded! group '${name}' deleted`;
-        }
-        for (let item of node.Members) {
-            if (MainHelpers_1.GetType(item) === 'user')
-                break;
-            let res = _DeleteGroupItem(id, parentId, item);
-            if (res === 'succeeded')
-                return res;
-            else if (res != '')
-                return res;
-        }
-        return res;
-    });
-}
-function _DeleteGroupDirectSon(id, parentId) {
-    return __awaiter(this, void 0, void 0, function* () {
-        let index = DB2_1.DB2.Groups.findIndex(item => item.Id === id && MainHelpers_1.GetType(item) === 'group');
-        if (index === -1)
-            return 'failed! item selected not found';
-        if (DB2_1.DB2.Groups[index].Members.length === 0 || MainHelpers_1.GetType(DB2_1.DB2.Groups[index].Members[0]) === 'user') {
-            DB2_1.DB2.Groups.splice(index, 1);
-            return DB2_1.DB2.writeFile('Groups');
-        }
-        for (let elem of DB2_1.DB2.Groups[index].Members) {
-            let indexName = DB2_1.DB2.Groups.findIndex(item => item.Name === elem.Name && MainHelpers_1.GetType(item) === 'group' && item.Name !== DB2_1.DB2.Groups[index].Name);
-            if (indexName > -1)
-                return `failed! same name in one of members in '${DB2_1.DB2.Groups[index].Name}' and in is brothers`;
-        }
-        let name = DB2_1.DB2.Groups[index].Name;
-        DB2_1.DB2.Groups.splice(index, 1, ...DB2_1.DB2.Groups[index].Members);
-        DB2_1.DB2.writeFile('Groups');
-        return `succeeded! group '${name}' deleted`;
+        yield DB_1.DB.AnyQuery(DB_1.DB.update('groups', { field: 'parent_id', value: id }, { field: 'parent_id', value: parentId }));
+        yield DB_1.DB.AnyQuery(DB_1.DB.delete('groups', { field: 'id', value: id }));
+        return `succeeded! group '${deleteGroup[0].name}' deleted`;
     });
 }
 function FlatteningGroup(id, parentId) {
