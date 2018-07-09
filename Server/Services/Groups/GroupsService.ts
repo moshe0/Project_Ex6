@@ -1,8 +1,4 @@
-import {DB2} from "../../DB/DB2";
-import {GetGroupNextId, GetType} from "../../Helpers/MainHelpers";
-import {Group} from "../../Models/Group";
-import {User} from "../../Models/User";
-import {DB, db} from "../../DB/DB";
+import {DB} from "../../DB/DB";
 
 
 export async function GetGroups(){

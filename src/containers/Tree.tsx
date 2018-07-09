@@ -38,11 +38,11 @@ class Tree extends React.Component <{}, {}>{
 
         new InitTree($(this.ref), StateStore.getInstance().get('Data'));
         if(!!StateStore.getInstance().get('AllTree'))
-            InitTree.InitExsitingTree();
+            InitTree.InitExistingTree();
         // console.log('****  Done  ****');
     }
 
-    //Befor component dead
+    //Before component dead
     componentWillUnmount() {
         if(StateStore.getInstance().get('ModalState') === true)
             StateStore.getInstance().set('TreeState', $(this.ref).find('li'));

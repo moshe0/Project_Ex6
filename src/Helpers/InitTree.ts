@@ -346,7 +346,7 @@ export class InitTree {
         return $('ul li');
     }
 
-    static InitExsitingTree() {
+    static InitExistingTree() {
         let prevData = StateStore.getInstance().get('AllTree');
         let currentData = $('ul li');
         let indexPrev = 0, indexCurrent = 0;

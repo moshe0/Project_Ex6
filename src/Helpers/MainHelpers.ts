@@ -12,6 +12,7 @@ export function GetItems(Obj) : any[]{
     return Obj['Members'];
 }
 
+/*
 export function RenameProp(oldProp, newProp, { [oldProp]: old, ...others  }){
     return {
         [newProp]: old,
@@ -20,3 +21,12 @@ export function RenameProp(oldProp, newProp, { [oldProp]: old, ...others  }){
 }
 
 
+for(let i=0 ; i<ObjUsers.length ; i++){
+    ObjUsers[i] = RenameProp('age', 'Age', ObjUsers[i]);
+    ObjUsers[i] = RenameProp('password', 'Password', ObjUsers[i]);
+    ObjUsers[i] = RenameProp('name', 'Name', ObjUsers[i]);
+    ObjUsers[i] = RenameProp('id', 'Id', ObjUsers[i]);
+}
+
+
+*/

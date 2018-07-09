@@ -1,7 +1,0 @@
-[
-	{"Id":1,"Content":"שלום לכולם","SenderName":"Moshe","ReceiverName":"Good Friends","SenderId":1,"ReceiverId":1000003,"TimeSent":"7:58:06"},
-	{"Id":2,"Content":"שלום זה אודי","SenderName":"Udi","ReceiverName":"Good Friends","SenderId":5,"ReceiverId":1000003,"TimeSent":"7:59:22"},
-	{"Id":3,"Content":"ואני טומי","SenderName":"Tommy","ReceiverName":"Good Friends","SenderId":4,"ReceiverId":1000003,"TimeSent":"8:00:28"},
-	{"Id":4,"Content":"הגשת את התרגיל","SenderName":"Moshe","ReceiverName":"Raz","SenderId":1,"ReceiverId":2,"TimeSent":"8:00:53"},
-	{"Id":5,"Content":"אני כבר מגיש","SenderName":"Raz","ReceiverName":"Moshe","SenderId":2,"ReceiverId":1,"TimeSent":"8:01:12"}
-]
