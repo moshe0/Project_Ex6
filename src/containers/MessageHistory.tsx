@@ -1,8 +1,8 @@
 import * as React from "react";
 import StateStore from "../state/StateStore";
-import {GetType} from "../Helpers/MainHelpers";
 import {appService} from "../AppService";
 import {InitTree} from "../Helpers/InitTree";
+import MainHelpers from "../Helpers/MainHelpers";
 
 
 
@@ -85,9 +85,9 @@ class MessageHistory extends React.Component <{}, {Messages}>{
             const itemClassName = this.stateStore.get('currentUser').Id === item.SenderId? 'MineMessage MessageHistory' : 'OtherMessage MessageHistory';
             let Receiver = '';
             if(!! this.stateStore.get('Receiver'))
-                Receiver = GetType(this.stateStore.get('Receiver'));
+                Receiver = MainHelpers.GetType(this.stateStore.get('Receiver'));
             else if(!! this.stateStore.get('HoldReceiver'))
-                Receiver = GetType(this.stateStore.get('HoldReceiver'));
+                Receiver = MainHelpers.GetType(this.stateStore.get('HoldReceiver'));
 
             if(Receiver === 'group') {
                 return (

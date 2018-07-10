@@ -9,6 +9,7 @@ import {appService} from "../AppService";
 import Add from "../components/Add";
 import UpdateUser from "../components/UpdateUser";
 import {InitTree} from "../Helpers/InitTree";
+import MainHelpers from "../Helpers/MainHelpers";
 
 
 interface IAppUserState {
@@ -56,7 +57,7 @@ class App extends React.Component<{}, IAppUserState> {
             const Data = await appService.GetData();
 
             if (!!LoginUser && !!Data) {
-                StateStore.FirstUse = 1;
+                MainHelpers.FirstUse = 1;
                 StateStore.getInstance().setMany({
                     'currentUser': LoginUser,
                     'Data': Data,

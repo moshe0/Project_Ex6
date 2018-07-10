@@ -2,6 +2,7 @@ import * as React from "react";
 import * as $ from 'jquery';
 import {InitTree} from "../Helpers/InitTree";
 import StateStore from "../state/StateStore";
+import MainHelpers from "../Helpers/MainHelpers";
 
 
 class Tree extends React.Component <{}, {}>{
@@ -23,7 +24,7 @@ class Tree extends React.Component <{}, {}>{
         if(!!StateStore.getInstance().get('currentUser') &&
             !StateStore.getInstance().get('LogInState') &&
             !StateStore.getInstance().get('ModalState') &&
-            StateStore.FirstUse === 1
+            MainHelpers.FirstUse === 1
             ||
             StateStore.getInstance().get('LogInState') &&
             StateStore.getInstance().get('ModalState')
@@ -34,7 +35,7 @@ class Tree extends React.Component <{}, {}>{
     }
 
     componentDidUpdate() {
-        StateStore.FirstUse = 0;
+        MainHelpers.FirstUse = 0;
 
         new InitTree($(this.ref), StateStore.getInstance().get('Data'));
         if(!!StateStore.getInstance().get('AllTree'))

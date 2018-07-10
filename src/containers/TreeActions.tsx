@@ -3,6 +3,7 @@ import {Link} from "react-router-dom";
 import {InitTree} from "../Helpers/InitTree";
 import StateStore from "../state/StateStore";
 import {appService} from "../AppService";
+import MainHelpers from "../Helpers/MainHelpers";
 
 
 class TreeActions extends React.Component<{}, {}> {
@@ -42,7 +43,7 @@ class TreeActions extends React.Component<{}, {}> {
         console.log(MessageRes);
 
         if(MessageRes.startsWith('succeeded')){
-            StateStore.FirstUse = 1;
+            MainHelpers.FirstUse = 1;
             StateStore.getInstance().setMany({
                 'Data' : await appService.GetData(),
                 'TreeSelected' : null
@@ -64,7 +65,7 @@ class TreeActions extends React.Component<{}, {}> {
 
         console.log(MessageRes);
         if(MessageRes.startsWith('succeeded')){
-            StateStore.FirstUse = 1;
+            MainHelpers.FirstUse = 1;
             StateStore.getInstance().setMany({
                 'Data' : await appService.GetData(),
                 'TreeSelected' : null

@@ -5,6 +5,7 @@ import StateStore from "../state/StateStore";
 import {appService} from "../AppService";
 import {User} from "../Models/User";
 import {InitTree} from "../Helpers/InitTree";
+import MainHelpers from "../Helpers/MainHelpers";
 
 
 interface IUpdateState {
@@ -37,7 +38,7 @@ class UpdateUser extends React.Component<{}, IUpdateState> {
 
         console.log(MessageRes);
         if(MessageRes.startsWith('succeeded')){
-            StateStore.FirstUse = 1;
+            MainHelpers.FirstUse = 1;
             StateStore.getInstance().setMany({
                 'Data' : await appService.GetData(),
                 'TreeSelected' : null

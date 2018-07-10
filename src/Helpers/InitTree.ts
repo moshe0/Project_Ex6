@@ -1,7 +1,7 @@
 import StateStore from "../state/StateStore";
 import * as $ from "jquery";
-import {GetItems, GetType} from "./MainHelpers";
 import {TreeSelectedItem} from "../Models/TreeSelectedItem";
+import MainHelpers from "./MainHelpers";
 
 
 export class InitTree {
@@ -36,7 +36,7 @@ export class InitTree {
 
         let span = $("<span>");
         span.appendTo(li);
-        let type = GetType(data);
+        let type = MainHelpers.GetType(data);
         if (type === 'group')
             image.src = "/TreeImages/Users/multipleUsers.png";
 
@@ -63,7 +63,7 @@ export class InitTree {
                 parent.data('items').push(li);
         }
 
-        for (let item of GetItems(data))
+        for (let item of MainHelpers.GetItems(data))
             this._Load(item, li, indentation + 25);
 
     }
@@ -236,7 +236,7 @@ export class InitTree {
                 if (pathArr.length - 1 === index)
                     return data[i];
                 else {
-                    return InitTree.getItemFromPath(pathArr, GetItems(data[i]), ++index);
+                    return InitTree.getItemFromPath(pathArr, MainHelpers.GetItems(data[i]), ++index);
                 }
             }
         }

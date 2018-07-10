@@ -5,6 +5,7 @@ import StateStore from "../state/StateStore";
 import {User} from "../Models/User";
 import {appService} from "../AppService";
 import {Group} from "../Models/Group";
+import MainHelpers from "../Helpers/MainHelpers";
 
 
 
@@ -74,7 +75,7 @@ class Add extends React.Component<IAddProps, IAddState> {
 
         console.log(MessageRes);
         if(MessageRes.startsWith('succeeded')){
-            StateStore.FirstUse = 1;
+            MainHelpers.FirstUse = 1;
             StateStore.getInstance().setMany({
                 'Data' : await appService.GetData(),
                 'TreeSelected' : null

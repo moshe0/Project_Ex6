@@ -1,16 +1,42 @@
-export function GetType(Obj) : string{
-    for(let propName in Obj) {
-        if(propName === 'Members')
-            return 'group';
+import * as io from 'socket.io-client';
+import StateStore from "../state/StateStore";
+
+
+class MainHelpers {
+    static FirstUse = 1;
+    static socket = io('http://localhost:4000');
+
+
+    static GetType(Obj): string {
+        for (let propName in Obj) {
+            if (propName === 'Members')
+                return 'group';
+        }
+        return 'user';
     }
-    return 'user';
+
+    static GetItems(Obj): any[] {
+        if (MainHelpers.GetType(Obj) === 'user')
+            return [];
+        return Obj['Members'];
+    }
 }
 
-export function GetItems(Obj) : any[]{
-    if(GetType(Obj) === 'user')
-        return [];
-    return Obj['Members'];
-}
+MainHelpers.socket.on('chat', (names) => {
+    let index = names.find(item => item === StateStore.getInstance().get('currentUser').Name);
+    if(!! index) {
+        StateStore.getInstance().onStoreChanged();
+    }
+});
+
+export default MainHelpers;
+
+
+
+
+
+
+
 
 /*
 export function RenameProp(oldProp, newProp, { [oldProp]: old, ...others  }){

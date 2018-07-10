@@ -4,6 +4,7 @@ import StateStore from "../state/StateStore";
 import * as moment from 'moment'
 import {appService} from "../AppService";
 import {InitTree} from "../Helpers/InitTree";
+import MainHelpers from "../Helpers/MainHelpers";
 
 
 
@@ -36,7 +37,7 @@ class SendingMessage extends React.Component <{}, ISendingMessageState> {
         this.setState({inputVal: ''});
 
         await appService.AddMessage(m);
-         StateStore.socket.emit('chat', InitTree.GetSelectedChildrenNames());
+         MainHelpers.socket.emit('chat', InitTree.GetSelectedChildrenNames());
      };
 
     EnterKeyPress = (key : any) => {

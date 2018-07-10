@@ -1,6 +1,4 @@
 import {TreeSelectedItem} from "../Models/TreeSelectedItem";
-// import io from 'socket.io-client';
-import * as io from 'socket.io-client';
 
 
 
@@ -16,8 +14,6 @@ interface IStateStore {
 export class StateStore implements IStateStore {
     listeners: Function[];
     static instance: IStateStore;
-    static FirstUse = 1;
-    static socket = io('http://localhost:4000');
 
     Data : any[];
     currentUser : {Name};
@@ -41,13 +37,6 @@ export class StateStore implements IStateStore {
 
     constructor(){
         this.listeners = [];
-
-        StateStore.socket.on('chat', (names) => {
-            let index = names.find(item => item === StateStore.getInstance().get('currentUser').Name);
-            if(!! index) {
-                StateStore.getInstance().onStoreChanged();
-            }
-        });
     }
 
     set(key: string, val: any) {
