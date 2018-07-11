@@ -10,7 +10,7 @@ import {connect} from "react-redux";
 
 
 interface ITreeProps {
-    data : any
+    data : any,
 }
 
 

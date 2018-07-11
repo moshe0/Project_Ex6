@@ -11,7 +11,8 @@ import {connect} from "react-redux";
 
 
 interface ITreeActionsProps {
-    receiver : any
+    receiver : any,
+    currentUser : any
 }
 
 class TreeActions extends React.Component<ITreeActionsProps, {}> {
@@ -35,11 +36,14 @@ class TreeActions extends React.Component<ITreeActionsProps, {}> {
             'TreeSelected' : InitTree.GetTreeItem()
         }));
         let MessageRes : string;
+        let IsCurrentUserSelected = false;
 
         const type = InitTree.SelectedType();
 
         if (type === 'User without parent'){ // DeleteUser server
             MessageRes = await appService.DeleteUser(store.getState()['TreeSelected'].Id);
+            if(store.getState()['TreeSelected'].Id === store.getState()['currentUser'].Id)
+                IsCurrentUserSelected = true;
         }
         else if (type === 'User in a parent'){ // DeleteUserFromGroup server
             MessageRes = await appService.DeleteUserFromGroup(store.getState()['TreeSelected'].Id, store.getState()['TreeSelected'].ParentId);
@@ -52,11 +56,36 @@ class TreeActions extends React.Component<ITreeActionsProps, {}> {
 
         if(MessageRes.startsWith('succeeded')){
             MainHelpers.FirstUse = 1;
-            store.dispatch(setMany({
-                'Data' : await appService.GetData(),
-                'TreeSelected' : null
-            }));
-            store.dispatch(setAllTree(null));
+            if(!IsCurrentUserSelected) {
+                store.dispatch(setMany({
+                    'Data': await appService.GetData(),
+                    'TreeSelected': null
+                }));
+                store.dispatch(setAllTree(null));
+            }
+            else{
+
+                store.dispatch(setMany({
+                    'Receiver': null,
+                    'ModalState': true,
+                    'HoldReceiver': null,
+                    'currentUser': null,
+                    'Data' : [],
+                    'LogInState': true,
+                }));
+                // store.dispatch(setMany({
+                //     'Data' : [],
+                //     'currentUser' : null,
+                //     'Receiver' : null,
+                //     'HoldReceiver' : null,
+                //     'ModalState' : false,
+                //     'LogInState' : true,
+                //     'TreeSelected' : null,
+                //     'setAllTree' : null,
+                //     'MessageErr' : '',
+                //     'Messages' : []
+                // }));
+            }
         }
         alert(MessageRes);
     };
@@ -85,7 +114,12 @@ class TreeActions extends React.Component<ITreeActionsProps, {}> {
 
     public render() {
         const type  = InitTree.SelectedType();
-        if(type === 'Not selected'){
+        if(!store.getState()['currentUser']){
+            return (
+                <div className="ActionTree"/>
+            );
+        }
+        else if(type === 'Not selected'){
             return (
                 <div className="ActionTree">
                     <div className="TreeActionsImages EditImageDisable"/>
@@ -170,6 +204,7 @@ class TreeActions extends React.Component<ITreeActionsProps, {}> {
 const mapPropsToState = (state : AppState, ownProps) => {
     return {
         receiver : state.Receiver,
+        currentUser : state.currentUser
     }
 };
 

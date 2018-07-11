@@ -5,6 +5,7 @@ import {store} from "../Redux/store";
 
 class MainHelpers {
     static FirstUse = 1;
+
     static socket = io('http://localhost:4000');
 
 

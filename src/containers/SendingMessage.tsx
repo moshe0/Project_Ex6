@@ -86,7 +86,7 @@ class SendingMessage extends React.Component <ISendingMessageProps, ISendingMess
 
 const mapPropsToState = (state : AppState, ownProps) => {
     return {
-        receiver : state.Receiver,
+        receiver : state.Receiver
     }
 };
 
