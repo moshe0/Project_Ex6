@@ -48,7 +48,7 @@ class LogIn extends React.Component<ILogInProps, {}> {
 const styles: { [key: string]: React.CSSProperties } = {
     modal: {
         minWidth: '50px',
-        minHeight: '230px'
+        minHeight: '240px'
     },
     p: {
         margin: "0 0 0.5em 0",

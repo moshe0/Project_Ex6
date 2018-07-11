@@ -13,6 +13,9 @@ const handlers = {
     "SET_ALL_TREE":setAllTree,
     "SET_TREE_SELECTED":setTreeSelected,
     "REFRESH": refresh,
+    "SET_MESSAGE_ERR": setMessageErr,
+    "SET_MESSAGES": setMessageErr,
+    "SET_MANY": setMany
 };
 
 export function rootReducer(state: AppState, action: AnyAction): AppState {
@@ -31,7 +34,7 @@ function setData(state: AppState, data: any[]): AppState {
     }
 }
 
-function setCurrentUser(state: AppState, user: {Name}): AppState {
+function setCurrentUser(state: AppState, user: {Name, Password, Id}): AppState {
     return {
         ...state,
         currentUser: user,
@@ -83,5 +86,29 @@ function setTreeSelected(state: AppState, treeItem: TreeSelectedItem): AppState 
 function refresh(state: AppState) {
     return {
         ...state,
+    }
+}
+
+export function setMessageErr(state: AppState, message: string) {
+    return {
+        ...state,
+        MessageErr: message,
+    }
+}
+
+export function setMessages(state: AppState, messages: any[]) {
+    return {
+        ...state,
+        Messages: messages,
+    }
+}
+
+export function setMany(state: AppState, obj: any) {
+    const merge = {...state, ...obj};
+    console.log(merge);
+
+    return {
+        ...state,
+        ...obj
     }
 }

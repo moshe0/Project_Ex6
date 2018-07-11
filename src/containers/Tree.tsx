@@ -3,6 +3,7 @@ import * as $ from 'jquery';
 import {InitTree} from "../Helpers/InitTree";
 import StateStore from "../state/StateStore";
 import MainHelpers from "../Helpers/MainHelpers";
+import {store} from "../Redux/store";
 
 
 class Tree extends React.Component <{}, {}>{
@@ -21,13 +22,13 @@ class Tree extends React.Component <{}, {}>{
         // console.log('LogInState: ' ,StateStore.getInstance().get('LogInState'));
         // console.log('LogIOutState: ' , StateStore.getInstance().get('LogIOutState'));
 
-        if(!!StateStore.getInstance().get('currentUser') &&
-            !StateStore.getInstance().get('LogInState') &&
-            !StateStore.getInstance().get('ModalState') &&
+        if(!!store.getState()['currentUser'] &&
+            !store.getState()['LogInState'] &&
+            !store.getState()['ModalState'] &&
             MainHelpers.FirstUse === 1
             ||
-            StateStore.getInstance().get('LogInState') &&
-            StateStore.getInstance().get('ModalState')
+            store.getState()['LogInState'] &&
+        store.getState()['ModalState']
         ) {
             return true;
         }
@@ -37,15 +38,15 @@ class Tree extends React.Component <{}, {}>{
     componentDidUpdate() {
         MainHelpers.FirstUse = 0;
 
-        new InitTree($(this.ref), StateStore.getInstance().get('Data'));
-        if(!!StateStore.getInstance().get('AllTree'))
+        new InitTree($(this.ref), store.getState()['Data']);
+        if(!!store.getState()['AllTree'])
             InitTree.InitExistingTree();
         // console.log('****  Done  ****');
     }
 
     //Before component dead
     componentWillUnmount() {
-        if(StateStore.getInstance().get('ModalState') === true)
+        if(store.getState()['ModalState'] === true)
             StateStore.getInstance().set('TreeState', $(this.ref).find('li'));
         $(this.ref).off();
     }

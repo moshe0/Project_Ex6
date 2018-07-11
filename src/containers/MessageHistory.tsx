@@ -3,66 +3,38 @@ import StateStore from "../state/StateStore";
 import {appService} from "../AppService";
 import {InitTree} from "../Helpers/InitTree";
 import MainHelpers from "../Helpers/MainHelpers";
+import {store} from "../Redux/store";
+import {AppState} from "../Redux/AppState";
+import {connect} from "react-redux";
+import {setMessages} from "../Redux/actions";
 
 
+interface IMessageHistoryProps {
+    receiver : any
+}
 
-class MessageHistory extends React.Component <{}, {Messages}>{
+class MessageHistory extends React.Component <IMessageHistoryProps, {}>{
 
     stateStore = StateStore.getInstance();
     messagesBlock : any;
 
-    constructor(props: {}) {
+    constructor(props: IMessageHistoryProps) {
         super(props);
         this.messagesBlock = React.createRef();
-        this.state = {
-            Messages : [],
-        };
-
-
-        this.stateStore.subscribe(async()=>{
-            let index;
-            if(!!StateStore.getInstance().get('currentUser'))
-                index = InitTree.GetSelectedChildrenNames().find(item => item === StateStore.getInstance().get('currentUser').Name);
-
-            if(!! this.stateStore.get('currentUser') && !! this.stateStore.get('Receiver') && !!index) {
-                const resMessages = await appService.GetMessages(this.stateStore.get('currentUser'), this.stateStore.get('Receiver'));
-                this.setState({
-                    Messages : resMessages
-                });
-            }
-            else if(!!this.stateStore.get('HoldReceiver')  && !!index){
-                const resMessages = await appService.GetMessages(this.stateStore.get('currentUser'), this.stateStore.get('HoldReceiver'));
-                    this.setState({
-                    Messages : resMessages
-                });
-            }
-            else{
-                this.setState({
-                    Messages: []
-                });
-            }
-        });
     }
 
     //Befor render
     async componentWillMount(){
-        const resMessages = await appService.GetMessages(this.stateStore.get('currentUser'), this.stateStore.get('Receiver'));
-        if(!! this.stateStore.get('currentUser') && !! this.stateStore.get('Receiver')) {
-            this.setState({
-                Messages : resMessages
-            });
+        const resMessages = await appService.GetMessages(store.getState()['currentUser'], store.getState()['Receiver']);
+        if(!! store.getState()['currentUser'] && !! store.getState()['Receiver']) {
+            store.dispatch(setMessages(resMessages));
         }
-        else if(!!this.stateStore.get('HoldReceiver')){
-            const resMessages = await appService.GetMessages(this.stateStore.get('currentUser'), this.stateStore.get('HoldReceiver'));
-            this.setState({
-                Messages : resMessages
-            });
+        else if(!!store.getState()['HoldReceiver']){
+            const resMessages = await appService.GetMessages(store.getState()['currentUser'], store.getState()['HoldReceiver']);
+            store.dispatch(setMessages(resMessages));
         }
-        else{
-            this.setState({
-                Messages : []
-            });
-        }
+        else
+            store.dispatch(setMessages([]));
     }
 
     //After render
@@ -71,23 +43,46 @@ class MessageHistory extends React.Component <{}, {Messages}>{
     }
 
     // After updating occurs
-    componentDidUpdate(){
+    async componentDidUpdate(){
+        let index;
+        if(!!store.getState()['currentUser'])
+            index = InitTree.GetSelectedChildrenNames().find(item => item === store.getState()['currentUser'].Name);
+
+        if(!! store.getState()['currentUser'] && !! store.getState()['Receiver'] && !!index) {
+            const resMessages = await appService.GetMessages(store.getState()['currentUser'], store.getState()['Receiver']);
+            this.setState({
+                Messages : resMessages
+            });
+        }
+        else if(!!store.getState()['HoldReceiver']  && !!index){
+            const resMessages = await appService.GetMessages(store.getState()['currentUser'], store.getState()['HoldReceiver']);
+            this.setState({
+                Messages : resMessages
+            });
+        }
+        else{
+            this.setState({
+                Messages: []
+            });
+        }
+
+
         this.messagesBlock.current.scrollTop = this.messagesBlock.current.scrollHeight;
     }
 
     public render() {
-        if(! this.stateStore.get('currentUser')){
+        if(!store.getState()['currentUser']){
             return (
                 <div className="content" ref={this.messagesBlock}/>
             );
         }
-        const listMessages = this.state.Messages.map((item, idx) => {
-            const itemClassName = this.stateStore.get('currentUser').Id === item.SenderId? 'MineMessage MessageHistory' : 'OtherMessage MessageHistory';
+        const listMessages = store.getState()['messages'].map((item, idx) => {
+            const itemClassName = store.getState()['currentUser'].Id === item.SenderId? 'MineMessage MessageHistory' : 'OtherMessage MessageHistory';
             let Receiver = '';
-            if(!! this.stateStore.get('Receiver'))
-                Receiver = MainHelpers.GetType(this.stateStore.get('Receiver'));
-            else if(!! this.stateStore.get('HoldReceiver'))
-                Receiver = MainHelpers.GetType(this.stateStore.get('HoldReceiver'));
+            if(!! store.getState()['Receiver'])
+                Receiver = MainHelpers.GetType(store.getState()['Receiver']);
+            else if(!! store.getState()['HoldReceiver'])
+                Receiver = MainHelpers.GetType(store.getState()['HoldReceiver']);
 
             if(Receiver === 'group') {
                 return (
@@ -122,4 +117,12 @@ class MessageHistory extends React.Component <{}, {Messages}>{
     }
 }
 
-export default MessageHistory;
+
+const mapPropsToState = (state : AppState, ownProps) => {
+    return {
+         receiver : state.Receiver,
+    }
+};
+
+
+export default connect(mapPropsToState)(MessageHistory);

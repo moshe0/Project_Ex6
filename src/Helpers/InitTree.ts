@@ -1,7 +1,8 @@
-import StateStore from "../state/StateStore";
 import * as $ from "jquery";
 import {TreeSelectedItem} from "../Models/TreeSelectedItem";
 import MainHelpers from "./MainHelpers";
+import {store} from "../Redux/store";
+import {setReceiver} from "../Redux/actions";
 
 
 export class InitTree {
@@ -104,8 +105,8 @@ export class InitTree {
     }
 
     static inFocusChanged() {
-        let Receiver = InitTree.getItemFromPath(InitTree.SelectedArrayPath(), StateStore.getInstance().get('Data'), 0);
-        StateStore.getInstance().set('Receiver', Receiver);
+        let Receiver = InitTree.getItemFromPath(InitTree.SelectedArrayPath(), store.getState()['Data'], 0);
+        store.dispatch(setReceiver(Receiver));
     }
 
     static clearFocusClass() {
@@ -314,7 +315,7 @@ export class InitTree {
 
         else if(InitTree.SelectedType() === 'User without parent' || InitTree.SelectedType() === 'User in a parent'){
             names.push(itemFocused.text());
-            names.push(StateStore.getInstance().get('currentUser').Name);
+            names.push(store.getState()['currentUser'].Name);
             return names;
         }
 
@@ -347,7 +348,7 @@ export class InitTree {
     }
 
     static InitExistingTree() {
-        let prevData = StateStore.getInstance().get('AllTree');
+        let prevData = store.getState()['AllTree'];
         let currentData = $('ul li');
         let indexPrev = 0, indexCurrent = 0;
         if (prevData.length >= currentData.length) { // in case of Flatting or Delete

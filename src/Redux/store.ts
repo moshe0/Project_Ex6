@@ -2,6 +2,8 @@ import {Action, applyMiddleware, createStore, Dispatch, Unsubscribe} from "redux
 import thunk from "redux-thunk";
 import {rootReducer} from "./reducers";
 import {AppState} from "./AppState";
+import {composeWithDevTools} from "redux-devtools-extension";
+
 
 
 const initialState: AppState = {
@@ -12,7 +14,9 @@ const initialState: AppState = {
     ModalState : false,
     LogInState : true,
     AllTree : null,
-    TreeSelected : null
+    TreeSelected : null,
+    MessageErr : '',
+    Messages : []
 };
 
 
@@ -25,5 +29,5 @@ interface AppStore {
 export const store: AppStore = createStore(
     rootReducer,
     initialState,
-    applyMiddleware(thunk),
+    composeWithDevTools(applyMiddleware(thunk))
 );

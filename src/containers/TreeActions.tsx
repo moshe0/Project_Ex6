@@ -1,9 +1,10 @@
 import * as React from "react";
 import {Link} from "react-router-dom";
 import {InitTree} from "../Helpers/InitTree";
-import StateStore from "../state/StateStore";
 import {appService} from "../AppService";
 import MainHelpers from "../Helpers/MainHelpers";
+import {store} from "../Redux/store";
+import {setAllTree, setMany} from "../Redux/actions";
 
 
 class TreeActions extends React.Component<{}, {}> {
@@ -13,64 +14,64 @@ class TreeActions extends React.Component<{}, {}> {
 
     OnClick = () => {
         if(InitTree.SelectedType() === 'Not selected')
-            StateStore.getInstance().set('AllTree',InitTree.GetAllTree());
+            store.dispatch(setAllTree(InitTree.GetAllTree()));
         else
-            StateStore.getInstance().setMany({
+            store.dispatch(setMany({
                 'AllTree' : InitTree.GetAllTree(),
                 'TreeSelected' : InitTree.GetTreeItem()
-            });
+            }));
     };
 
     OnDeleteClick = async () =>{
-        StateStore.getInstance().setMany({
+        store.dispatch(setMany({
             'AllTree' : InitTree.GetAllTree(),
             'TreeSelected' : InitTree.GetTreeItem()
-        });
+        }));
         let MessageRes : string;
 
         const type = InitTree.SelectedType();
 
         if (type === 'User without parent'){ // DeleteUser server
-            MessageRes = await appService.DeleteUser(StateStore.getInstance().get('TreeSelected').Id);
+            MessageRes = await appService.DeleteUser(store.getState()['TreeSelected'].Id);
         }
         else if (type === 'User in a parent'){ // DeleteUserFromGroup server
-            MessageRes = await appService.DeleteUserFromGroup(StateStore.getInstance().get('TreeSelected').Id, StateStore.getInstance().get('TreeSelected').ParentId);
+            MessageRes = await appService.DeleteUserFromGroup(store.getState()['TreeSelected'].Id, store.getState()['TreeSelected'].ParentId);
         }
         else{ // DeleteGroup server
-            MessageRes = await appService.DeleteGroup(StateStore.getInstance().get('TreeSelected').Id, StateStore.getInstance().get('TreeSelected').ParentId);
+            MessageRes = await appService.DeleteGroup(store.getState()['TreeSelected'].Id, store.getState()['TreeSelected'].ParentId);
         }
 
         console.log(MessageRes);
 
         if(MessageRes.startsWith('succeeded')){
             MainHelpers.FirstUse = 1;
-            StateStore.getInstance().setMany({
+            store.dispatch(setMany({
                 'Data' : await appService.GetData(),
                 'TreeSelected' : null
-            });
-            StateStore.getInstance().set('AllTree', null);
+            }));
+            store.dispatch(setAllTree(null));
         }
         alert(MessageRes);
     };
 
 
     OnFlatteningClick = async () =>{
-        StateStore.getInstance().setMany({
+        store.dispatch(setMany({
             'AllTree' : InitTree.GetAllTree(),
             'TreeSelected' : InitTree.GetTreeItem()
-        });
+        }));
         let MessageRes : string;
 
-        MessageRes = await appService.FlatteningGroup(StateStore.getInstance().get('TreeSelected').Id, StateStore.getInstance().get('TreeSelected').ParentId);
+        MessageRes = await appService.FlatteningGroup(store.getState()['TreeSelected'].Id, store.getState()['TreeSelected'].ParentId);
 
         console.log(MessageRes);
         if(MessageRes.startsWith('succeeded')){
             MainHelpers.FirstUse = 1;
-            StateStore.getInstance().setMany({
+            store.dispatch(setMany({
                 'Data' : await appService.GetData(),
                 'TreeSelected' : null
-            });
-            StateStore.getInstance().set('AllTree', null);
+            }));
+            store.dispatch(setAllTree(null));
         }
         alert(MessageRes);
     };

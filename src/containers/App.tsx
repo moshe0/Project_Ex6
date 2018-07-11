@@ -1,81 +1,54 @@
 import Header from './Header';
 import Main from './Main';
 import * as React from 'react'
-import StateStore from "../state/StateStore";
 import LogIn from "../components/LogIn";
 import LogOut from "../components/LogOut";
 import {BrowserRouter, Redirect, Route, Switch} from 'react-router-dom';
-import {appService} from "../AppService";
 import Add from "../components/Add";
 import UpdateUser from "../components/UpdateUser";
 import {InitTree} from "../Helpers/InitTree";
-import MainHelpers from "../Helpers/MainHelpers";
+import {AppState} from "../Redux/AppState";
+import {connect} from "react-redux";
+import {doChangeErr, doLogin} from "../Redux/actions";
+import {store} from "../Redux/store";
 
-
-interface IAppUserState {
-    userLogin: string,
-    passwordLogin: string,
-    MessageErr : string
+interface IAppProps {
+    doLogin(userName: string, password: string): void,
+    doChangeErr(err: string),
+    messageErr : string,
+    logInState: boolean
 }
 
-class App extends React.Component<{}, IAppUserState> {
+interface IAppState {
+    userLogin: string,
+    passwordLogin: string,
+}
+
+class App extends React.Component<IAppProps, IAppState> {
     canLogin: boolean;
 
-    constructor(props: {}) {
+    constructor(props: IAppProps) {
         super(props);
 
         this.state = {
-            userLogin: 'Moshe',
+            userLogin : 'Moshe',
             passwordLogin: '11',
-            MessageErr : ''
         };
-
-        StateStore.getInstance().subscribe(() => {
-            let userLogin = this.state.userLogin;
-            this.setState({
-                userLogin: userLogin
-            });
-        });
     }
 
     Login = async () => {
-        const LoginUser = await appService.GetSpecificUser(this.state.userLogin, this.state.passwordLogin);
-        if(!LoginUser){
-            this.setState({
-                MessageErr : 'There is no connection!'
-            });
-            return;
-        }
-        else if(LoginUser.Id === -1){
-            this.setState({
-                MessageErr : 'User name or password incorrect!'
-            });
-            return;
-        }
-
-        else {
-            const Data = await appService.GetData();
-
-            if (!!LoginUser && !!Data) {
-                MainHelpers.FirstUse = 1;
-                StateStore.getInstance().setMany({
-                    'currentUser': LoginUser,
-                    'Data': Data,
-                    'ModalState': false,
-                    'LogInState': false
-                });
-            }
-        }
+        this.props.doLogin(this.state.userLogin, this.state.passwordLogin);
     };
 
     public InputChangedHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
         let name = event.target.name;
         const value = event.target.value;
 
+        this.props.doChangeErr('');
         if (name === 'userLogin')
-            this.setState({userLogin: value, MessageErr : ''});
+            this.setState({userLogin: value});
         else
-            this.setState({passwordLogin: value, MessageErr : ''});
+            this.setState({passwordLogin: value});
 
     };
 
@@ -83,7 +56,7 @@ class App extends React.Component<{}, IAppUserState> {
     ShowLogin = () => {
         const canLogin = !!this.state.userLogin && !!this.state.passwordLogin;
 
-        if (!!StateStore.getInstance().get('currentUser')) {
+        if(!!store.getState()['currentUser']){
             return (<Redirect to="/"/>)
         }
 
@@ -91,7 +64,7 @@ class App extends React.Component<{}, IAppUserState> {
             <LogIn
                 canLogin={canLogin}
                 passwordLogin={this.state.passwordLogin}
-                MessageErr={this.state.MessageErr}
+                MessageErr={this.props.messageErr}
                 userLogin={this.state.userLogin}
                 InputChangedHandler={this.InputChangedHandler}
                 LoginCallback={this.Login}
@@ -100,7 +73,7 @@ class App extends React.Component<{}, IAppUserState> {
     };
 
     ShowLogOut = () => {
-        if (!StateStore.getInstance().get('currentUser'))
+        if (!store.getState()['currentUser'])
             return (<Redirect to="/LogIn"/>);
         return <LogOut/>
     };
@@ -123,7 +96,7 @@ class App extends React.Component<{}, IAppUserState> {
     };
 
     appRoutes = () => {
-        const currentUser = !!StateStore.getInstance().get('currentUser');
+        const currentUser = !!store.getState()['currentUser'];
 
         return (
             <div>
@@ -143,7 +116,7 @@ class App extends React.Component<{}, IAppUserState> {
                         <Route path='/LogIn' render={this.ShowLogin}/>
                         <Route path='/' render={this.appRoutes}/>
                     </Switch>
-                    <Header/>
+                    <Header currentUser={store.getState()['currentUser']}/>
                     <Main/>
                 </div>
             </BrowserRouter>
@@ -152,4 +125,25 @@ class App extends React.Component<{}, IAppUserState> {
 }
 
 
-export default App;
+
+const mapPropsToState = (state : AppState, ownProps) => {
+    return {
+        messageErr : state.MessageErr,
+        logInState : state.LogInState
+    }
+};
+
+const mapDispatchToProps = (dispatch, ownProps) => {
+    return {
+        doLogin: (userName: string, password: string) => {
+            dispatch(doLogin({Name: userName, Password: password}))
+        },
+        doChangeErr: (err: string) => {
+            dispatch(doChangeErr(err))
+        }
+
+
+    }
+};
+
+export default connect(mapPropsToState, mapDispatchToProps)(App);

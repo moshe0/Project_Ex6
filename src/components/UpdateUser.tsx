@@ -1,11 +1,12 @@
 import * as React from "react";
 import Modal from "../containers/Modal";
 import {Link, Redirect, Route} from "react-router-dom";
-import StateStore from "../state/StateStore";
 import {appService} from "../AppService";
 import {User} from "../Models/User";
 import {InitTree} from "../Helpers/InitTree";
 import MainHelpers from "../Helpers/MainHelpers";
+import {store} from "../Redux/store";
+import {setAllTree, setMany, setTreeSelected} from "../Redux/actions";
 
 
 interface IUpdateState {
@@ -21,10 +22,10 @@ class UpdateUser extends React.Component<{}, IUpdateState> {
         super(props);
 
         this.state = {
-            userName : !!StateStore.getInstance().get('Receiver') ? StateStore.getInstance().get('Receiver').Name : '',
-            userPassword : !!StateStore.getInstance().get('Receiver') ? StateStore.getInstance().get('Receiver').Password : '',
-            userAge : !!StateStore.getInstance().get('Receiver') ? StateStore.getInstance().get('Receiver').Age : '',
-            canUpdate : !!StateStore.getInstance().get('Receiver'),
+            userName : !!store.getState()['Receiver'] ? store.getState()['Receiver'].Name : '',
+            userPassword : !!store.getState()['Receiver'] ? store.getState()['Receiver'].Password : '',
+            userAge : !!store.getState()['Receiver'] ? store.getState()['Receiver'].Age : '',
+            canUpdate : !!store.getState()['Receiver'],
             MessageResolve : ''
         };
     }
@@ -39,11 +40,11 @@ class UpdateUser extends React.Component<{}, IUpdateState> {
         console.log(MessageRes);
         if(MessageRes.startsWith('succeeded')){
             MainHelpers.FirstUse = 1;
-            StateStore.getInstance().setMany({
+            store.dispatch(setMany({
                 'Data' : await appService.GetData(),
                 'TreeSelected' : null
-            });
-            StateStore.getInstance().set('AllTree', null);
+            }));
+            store.dispatch(setAllTree(null));
             InitTree.inFocusChanged();
 
             this.setState({
@@ -56,7 +57,7 @@ class UpdateUser extends React.Component<{}, IUpdateState> {
 
 
     public Cancel = async() =>{
-        StateStore.getInstance().set('TreeSelected', null);
+        store.dispatch(setTreeSelected(null));
     };
 
     private UpdateInputChangedHandler = (event: React.ChangeEvent<HTMLInputElement>) => {

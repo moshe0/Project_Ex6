@@ -1,11 +1,12 @@
 import * as React from "react";
 import Modal from "../containers/Modal";
 import {Link, Redirect, Route} from "react-router-dom";
-import StateStore from "../state/StateStore";
 import {User} from "../Models/User";
 import {appService} from "../AppService";
 import {Group} from "../Models/Group";
 import MainHelpers from "../Helpers/MainHelpers";
+import {store} from "../Redux/store";
+import {setAllTree, setMany, setTreeSelected} from "../Redux/actions";
 
 
 
@@ -59,28 +60,28 @@ class Add extends React.Component<IAddProps, IAddState> {
             MessageRes = await appService.AddGroup(groupToSend, '', -1);
         }
         else if(this.state.selectedType === 'Add existing user to marked group'){
-            MessageRes = await appService.AddUserToExistingGroup(this.state.userNameG, StateStore.getInstance().get('TreeSelected').Id);
+            MessageRes = await appService.AddUserToExistingGroup(this.state.userNameG, store.getState()['TreeSelected'].Id);
 
         }
         else{
             if(this.state.groupNameG !== ''){
                 let groupToSend = new Group(0, this.state.groupNameG, []);
-                MessageRes = await appService.AddGroup(groupToSend, '', StateStore.getInstance().get('TreeSelected').Id);
+                MessageRes = await appService.AddGroup(groupToSend, '', store.getState()['TreeSelected'].Id);
             }
             else{
                 let groupToSend = new Group(0, this.state.groupNameU, []);
-                MessageRes = await appService.AddGroup(groupToSend, this.state.newGroupName, StateStore.getInstance().get('TreeSelected').Id);
+                MessageRes = await appService.AddGroup(groupToSend, this.state.newGroupName, store.getState()['TreeSelected'].Id);
             }
         }
 
         console.log(MessageRes);
         if(MessageRes.startsWith('succeeded')){
             MainHelpers.FirstUse = 1;
-            StateStore.getInstance().setMany({
+            store.dispatch(setMany({
                 'Data' : await appService.GetData(),
                 'TreeSelected' : null
-            });
-            StateStore.getInstance().set('AllTree', null);
+            }));
+            store.dispatch(setAllTree(null));
         }
 
         this.setState({
@@ -160,7 +161,7 @@ class Add extends React.Component<IAddProps, IAddState> {
     public AddRender =()=>(this.state.MessageResolve.startsWith('succeeded')? <Redirect to={{pathname:'/'}}/>: true);
 
     public Cancel = async() =>{
-        StateStore.getInstance().set('TreeSelected', null);
+        store.dispatch(setTreeSelected(null));
     };
 
     public AddInteraction(){
