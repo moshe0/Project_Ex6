@@ -5,6 +5,8 @@ import {appService} from "../AppService";
 import {InitTree} from "../Helpers/InitTree";
 import MainHelpers from "../Helpers/MainHelpers";
 import {store} from "../Redux/store";
+import {AppState} from "../Redux/AppState";
+import {connect} from "react-redux";
 
 
 
@@ -12,9 +14,12 @@ interface ISendingMessageState {
     inputVal: string
 }
 
+interface ISendingMessageProps {
+    receiver : any
+}
 
-class SendingMessage extends React.Component <{}, ISendingMessageState> {
-    constructor(props: {}) {
+class SendingMessage extends React.Component <ISendingMessageProps, ISendingMessageState> {
+    constructor(props: ISendingMessageProps) {
         super(props);
 
         this.state = {
@@ -78,4 +83,12 @@ class SendingMessage extends React.Component <{}, ISendingMessageState> {
     }
 }
 
-export default SendingMessage;
+
+const mapPropsToState = (state : AppState, ownProps) => {
+    return {
+        receiver : state.Receiver,
+    }
+};
+
+
+export default connect(mapPropsToState)(SendingMessage);

@@ -14,7 +14,7 @@ const handlers = {
     "SET_TREE_SELECTED":setTreeSelected,
     "REFRESH": refresh,
     "SET_MESSAGE_ERR": setMessageErr,
-    "SET_MESSAGES": setMessageErr,
+    "SET_MESSAGES": setMessages,
     "SET_MANY": setMany
 };
 

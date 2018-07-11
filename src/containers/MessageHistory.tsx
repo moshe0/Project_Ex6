@@ -5,11 +5,12 @@ import MainHelpers from "../Helpers/MainHelpers";
 import {store} from "../Redux/store";
 import {AppState} from "../Redux/AppState";
 import {connect} from "react-redux";
-import {doChangeErr, doLogin, setMessages} from "../Redux/actions";
+import {setMessages} from "../Redux/actions";
 
 
 interface IMessageHistoryProps {
-    receiver : any
+    receiver : any,
+    holdReceiver : any
 }
 
 class MessageHistory extends React.Component <IMessageHistoryProps, {}>{
@@ -21,28 +22,13 @@ class MessageHistory extends React.Component <IMessageHistoryProps, {}>{
         this.messagesBlock = React.createRef();
     }
 
-
-    //Before render
-    async componentWillMount(){
-        console.log('>>>>>>>>>>>>  componentWillMount');
-
-        if(!! store.getState()['currentUser'] && !! store.getState()['Receiver']) {
-            const resMessages = await appService.GetMessages(store.getState()['currentUser'], store.getState()['Receiver']);
-            store.dispatch(setMessages(resMessages));
-
-        }
-        else if(!!store.getState()['HoldReceiver']){
-            const resMessages = await appService.GetMessages(store.getState()['currentUser'], store.getState()['HoldReceiver']);
-            store.dispatch(setMessages(resMessages));
-        }
-        else
-            store.dispatch(setMessages([]));
-
-    }
-
-    //Before render when update
+    //Before render when update happens
     async componentWillUpdate (){
         console.log('>>>>>>>>>>>>  componentWillUpdate');
+        console.log('currentUser: ', store.getState()['currentUser']);
+        console.log('Receiver: ', store.getState()['Receiver']);
+        console.log('HoldReceiver: ', store.getState()['HoldReceiver']);
+
 
         let index;
         if(!!store.getState()['currentUser'])
@@ -59,7 +45,6 @@ class MessageHistory extends React.Component <IMessageHistoryProps, {}>{
         }
         else
             store.dispatch(setMessages([]));
-
     }
 
     //After render
@@ -125,6 +110,7 @@ class MessageHistory extends React.Component <IMessageHistoryProps, {}>{
 const mapPropsToState = (state : AppState, ownProps) => {
     return {
          receiver : state.Receiver,
+        holdReceiver : state.HoldReceiver
     }
 };
 

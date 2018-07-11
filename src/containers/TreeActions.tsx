@@ -5,10 +5,17 @@ import {appService} from "../AppService";
 import MainHelpers from "../Helpers/MainHelpers";
 import {store} from "../Redux/store";
 import {setAllTree, setMany} from "../Redux/actions";
+import {AppState} from "../Redux/AppState";
+import {connect} from "react-redux";
 
 
-class TreeActions extends React.Component<{}, {}> {
-    constructor(props: {}) {
+
+interface ITreeActionsProps {
+    receiver : any
+}
+
+class TreeActions extends React.Component<ITreeActionsProps, {}> {
+    constructor(props: ITreeActionsProps) {
         super(props);
     }
 
@@ -160,4 +167,11 @@ class TreeActions extends React.Component<{}, {}> {
 }
 
 
-export default TreeActions;
+const mapPropsToState = (state : AppState, ownProps) => {
+    return {
+        receiver : state.Receiver,
+    }
+};
+
+
+export default connect(mapPropsToState)(TreeActions);

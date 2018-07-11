@@ -4,24 +4,26 @@ import {InitTree} from "../Helpers/InitTree";
 import StateStore from "../state/StateStore";
 import MainHelpers from "../Helpers/MainHelpers";
 import {store} from "../Redux/store";
+import {AppState} from "../Redux/AppState";
+import {connect} from "react-redux";
 
 
-class Tree extends React.Component <{}, {}>{
+
+interface ITreeProps {
+    data : any
+}
+
+
+class Tree extends React.Component <ITreeProps, {}>{
     ref : any;
 
-    constructor(props: {}) {
+    constructor(props: ITreeProps) {
         super(props);
         this.ref = null;
     }
 
 
     shouldComponentUpdate(){
-        // console.log('Tree componentDidUpdate');
-        // console.log('Data: ', StateStore.getInstance().get('Data'));
-        // console.log('currentUser: ', StateStore.getInstance().get('currentUser'));
-        // console.log('LogInState: ' ,StateStore.getInstance().get('LogInState'));
-        // console.log('LogIOutState: ' , StateStore.getInstance().get('LogIOutState'));
-
         if(!!store.getState()['currentUser'] &&
             !store.getState()['LogInState'] &&
             !store.getState()['ModalState'] &&
@@ -41,7 +43,6 @@ class Tree extends React.Component <{}, {}>{
         new InitTree($(this.ref), store.getState()['Data']);
         if(!!store.getState()['AllTree'])
             InitTree.InitExistingTree();
-        // console.log('****  Done  ****');
     }
 
     //Before component dead
@@ -61,4 +62,13 @@ class Tree extends React.Component <{}, {}>{
     }
 }
 
-export default Tree;
+
+
+const mapPropsToState = (state : AppState, ownProps) => {
+    return {
+        data : state.Data,
+    }
+};
+
+
+export default connect(mapPropsToState)(Tree);

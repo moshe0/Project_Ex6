@@ -1,5 +1,6 @@
 import * as io from 'socket.io-client';
 import StateStore from "../state/StateStore";
+import {store} from "../Redux/store";
 
 
 class MainHelpers {
@@ -23,7 +24,7 @@ class MainHelpers {
 }
 
 MainHelpers.socket.on('chat', (names) => {
-    let index = names.find(item => item === StateStore.getInstance().get('currentUser').Name);
+    let index = names.find(item => item === store.getState()['currentUser'].Name);
     if(!! index) {
         StateStore.getInstance().onStoreChanged();
     }
