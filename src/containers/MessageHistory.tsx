@@ -1,12 +1,11 @@
 import * as React from "react";
-import StateStore from "../state/StateStore";
 import {appService} from "../AppService";
 import {InitTree} from "../Helpers/InitTree";
 import MainHelpers from "../Helpers/MainHelpers";
 import {store} from "../Redux/store";
 import {AppState} from "../Redux/AppState";
 import {connect} from "react-redux";
-import {setMessages} from "../Redux/actions";
+import {doChangeErr, doLogin, setMessages} from "../Redux/actions";
 
 
 interface IMessageHistoryProps {
@@ -15,7 +14,6 @@ interface IMessageHistoryProps {
 
 class MessageHistory extends React.Component <IMessageHistoryProps, {}>{
 
-    stateStore = StateStore.getInstance();
     messagesBlock : any;
 
     constructor(props: IMessageHistoryProps) {
@@ -23,11 +21,15 @@ class MessageHistory extends React.Component <IMessageHistoryProps, {}>{
         this.messagesBlock = React.createRef();
     }
 
-    //Befor render
+
+    //Before render
     async componentWillMount(){
-        const resMessages = await appService.GetMessages(store.getState()['currentUser'], store.getState()['Receiver']);
+        console.log('>>>>>>>>>>>>  componentWillMount');
+
         if(!! store.getState()['currentUser'] && !! store.getState()['Receiver']) {
+            const resMessages = await appService.GetMessages(store.getState()['currentUser'], store.getState()['Receiver']);
             store.dispatch(setMessages(resMessages));
+
         }
         else if(!!store.getState()['HoldReceiver']){
             const resMessages = await appService.GetMessages(store.getState()['currentUser'], store.getState()['HoldReceiver']);
@@ -35,6 +37,29 @@ class MessageHistory extends React.Component <IMessageHistoryProps, {}>{
         }
         else
             store.dispatch(setMessages([]));
+
+    }
+
+    //Before render when update
+    async componentWillUpdate (){
+        console.log('>>>>>>>>>>>>  componentWillUpdate');
+
+        let index;
+        if(!!store.getState()['currentUser'])
+            index = InitTree.GetSelectedChildrenNames().find(item => item === store.getState()['currentUser'].Name);
+
+        if(!! store.getState()['currentUser'] && !! store.getState()['Receiver'] && !!index) {
+            const resMessages = await appService.GetMessages(store.getState()['currentUser'], store.getState()['Receiver']);
+            store.dispatch(setMessages(resMessages));
+
+        }
+        else if(!!store.getState()['HoldReceiver']  && !!index){
+            const resMessages = await appService.GetMessages(store.getState()['currentUser'], store.getState()['HoldReceiver']);
+            store.dispatch(setMessages(resMessages));
+        }
+        else
+            store.dispatch(setMessages([]));
+
     }
 
     //After render
@@ -44,39 +69,18 @@ class MessageHistory extends React.Component <IMessageHistoryProps, {}>{
 
     // After updating occurs
     async componentDidUpdate(){
-        let index;
-        if(!!store.getState()['currentUser'])
-            index = InitTree.GetSelectedChildrenNames().find(item => item === store.getState()['currentUser'].Name);
-
-        if(!! store.getState()['currentUser'] && !! store.getState()['Receiver'] && !!index) {
-            const resMessages = await appService.GetMessages(store.getState()['currentUser'], store.getState()['Receiver']);
-            this.setState({
-                Messages : resMessages
-            });
-        }
-        else if(!!store.getState()['HoldReceiver']  && !!index){
-            const resMessages = await appService.GetMessages(store.getState()['currentUser'], store.getState()['HoldReceiver']);
-            this.setState({
-                Messages : resMessages
-            });
-        }
-        else{
-            this.setState({
-                Messages: []
-            });
-        }
-
-
         this.messagesBlock.current.scrollTop = this.messagesBlock.current.scrollHeight;
     }
 
     public render() {
+        console.log('>>>>>>>>>>>>>>>>>>>>>', store.getState()['Messages']);
+
         if(!store.getState()['currentUser']){
             return (
                 <div className="content" ref={this.messagesBlock}/>
             );
         }
-        const listMessages = store.getState()['messages'].map((item, idx) => {
+        const listMessages = store.getState()['Messages'].map((item, idx) => {
             const itemClassName = store.getState()['currentUser'].Id === item.SenderId? 'MineMessage MessageHistory' : 'OtherMessage MessageHistory';
             let Receiver = '';
             if(!! store.getState()['Receiver'])

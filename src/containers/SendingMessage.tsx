@@ -1,10 +1,10 @@
 import * as React from "react";
-import {Message} from "./../Models/Message";
-import StateStore from "../state/StateStore";
+import {Message} from "../Models/Message";
 import * as moment from 'moment'
 import {appService} from "../AppService";
 import {InitTree} from "../Helpers/InitTree";
 import MainHelpers from "../Helpers/MainHelpers";
+import {store} from "../Redux/store";
 
 
 
@@ -14,7 +14,6 @@ interface ISendingMessageState {
 
 
 class SendingMessage extends React.Component <{}, ISendingMessageState> {
-    stateStore = StateStore.getInstance();
     constructor(props: {}) {
         super(props);
 
@@ -33,7 +32,7 @@ class SendingMessage extends React.Component <{}, ISendingMessageState> {
      private handleButtonClick = async() => {
         if(this.state.inputVal.trim() === '')
             return;
-        let m = new Message(0, this.state.inputVal, this.stateStore.get('currentUser').Name, this.stateStore.get('Receiver').Name, this.stateStore.get('currentUser').Id, this.stateStore.get('Receiver').Id, moment().format('h:mm:ss'));
+        let m = new Message(0, this.state.inputVal, store.getState()['currentUser'].Name, store.getState()['Receiver'].Name, store.getState()['currentUser'].Id, store.getState()['Receiver'].Id, moment().format('h:mm:ss'));
         this.setState({inputVal: ''});
 
         await appService.AddMessage(m);
@@ -51,12 +50,12 @@ class SendingMessage extends React.Component <{}, ISendingMessageState> {
         let inputDisabled = false;
         let placeholder = 'Type Message...';
         let buttonDisabled = false;
-        if(!this.stateStore.get('currentUser') || InitTree.SelectedType() === 'Not selected') {
+        if(!store.getState()['currentUser'] || InitTree.SelectedType() === 'Not selected') {
             placeholder = '';
             inputDisabled = true;
         }
         else if(InitTree.SelectedType() !== 'User without parent' && InitTree.SelectedType() !== 'User in a parent'){
-            let index = InitTree.GetSelectedChildrenNames().find(item => item === StateStore.getInstance().get('currentUser').Name);
+            let index = InitTree.GetSelectedChildrenNames().find(item => item === store.getState()['currentUser'].Name);
             if (!index) {
                 placeholder = '';
                 inputDisabled = true;

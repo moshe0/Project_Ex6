@@ -126,7 +126,7 @@ class App extends React.Component<IAppProps, IAppState> {
 
 
 
-const mapPropsToState = (state : AppState, ownProps) => {
+const mapStateToProps = (state : AppState, ownProps) => {
     return {
         messageErr : state.MessageErr,
         logInState : state.LogInState
@@ -141,9 +141,7 @@ const mapDispatchToProps = (dispatch, ownProps) => {
         doChangeErr: (err: string) => {
             dispatch(doChangeErr(err))
         }
-
-
     }
 };
 
-export default connect(mapPropsToState, mapDispatchToProps)(App);
+export default connect(mapStateToProps, mapDispatchToProps)(App);
