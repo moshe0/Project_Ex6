@@ -1,5 +1,4 @@
 import * as io from 'socket.io-client';
-import StateStore from "../state/StateStore";
 import {store} from "../Redux/store";
 import {appService} from "../AppService";
 import {setMessages} from "../Redux/actions";
@@ -7,7 +6,7 @@ import {setMessages} from "../Redux/actions";
 
 class MainHelpers {
     static FirstUse = 1;
-
+    static inputReset = 0;
     static socket = io('http://localhost:4000');
 
 

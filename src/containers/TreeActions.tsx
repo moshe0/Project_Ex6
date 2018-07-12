@@ -65,7 +65,7 @@ class TreeActions extends React.Component<ITreeActionsProps, {}> {
                 store.dispatch(setAllTree(null));
             }
             else{ //currentUser deleted
-
+                MainHelpers.inputReset = 1;
                 store.dispatch(setMany({
                     'Receiver': null,
                     'ModalState': true,
@@ -75,18 +75,6 @@ class TreeActions extends React.Component<ITreeActionsProps, {}> {
                     'LogInState': true,
                     'Messages' : []
                 }));
-                // store.dispatch(setMany({
-                //     'Data' : [],
-                //     'currentUser' : null,
-                //     'Receiver' : null,
-                //     'HoldReceiver' : null,
-                //     'ModalState' : false,
-                //     'LogInState' : true,
-                //     'TreeSelected' : null,
-                //     'setAllTree' : null,
-                //     'MessageErr' : '',
-                //     'Messages' : []
-                // }));
             }
         }
         alert(MessageRes);

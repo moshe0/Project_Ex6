@@ -1,7 +1,6 @@
 import * as React from "react";
 import * as $ from 'jquery';
 import {InitTree} from "../Helpers/InitTree";
-import StateStore from "../state/StateStore";
 import MainHelpers from "../Helpers/MainHelpers";
 import {store} from "../Redux/store";
 import {AppState} from "../Redux/AppState";
@@ -47,8 +46,6 @@ class Tree extends React.Component <ITreeProps, {}>{
 
     //Before component dead
     componentWillUnmount() {
-        if(store.getState()['ModalState'] === true)
-            StateStore.getInstance().set('TreeState', $(this.ref).find('li'));
         $(this.ref).off();
     }
 

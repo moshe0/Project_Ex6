@@ -1,8 +1,8 @@
 import * as React from "react";
-import StateStore from "../state/StateStore";
 import {Link} from "react-router-dom";
 import {store} from "../Redux/store";
 import {setMany} from "../Redux/actions";
+import MainHelpers from "../Helpers/MainHelpers";
 
 interface IHeaderProps {
     currentUser : any

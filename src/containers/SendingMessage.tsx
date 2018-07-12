@@ -16,6 +16,7 @@ interface ISendingMessageState {
 
 interface ISendingMessageProps {
     receiver : any
+    logInState : boolean
 }
 
 class SendingMessage extends React.Component <ISendingMessageProps, ISendingMessageState> {
@@ -50,6 +51,14 @@ class SendingMessage extends React.Component <ISendingMessageProps, ISendingMess
         }
     };
 
+    Reset = () =>{
+        if(MainHelpers.inputReset === 1) {
+            MainHelpers.inputReset = 0;
+            this.setState({
+                inputVal: ''
+            });
+        }
+    };
 
     public render() {
         let inputDisabled = false;
@@ -72,21 +81,38 @@ class SendingMessage extends React.Component <ISendingMessageProps, ISendingMess
 
         let btnClass = (buttonDisabled) ? 'buttonDisabled' : 'buttonActive';
 
-        return (
-            <div className={'SendingMessage'}>
-                <input onKeyUp={this.EnterKeyPress} type='text' className='MessageInput' disabled={inputDisabled} onChange={this.handleInputChange} value={this.state.inputVal} placeholder={placeholder}/>
-                <button onClick={this.handleButtonClick} className={btnClass} type='button' disabled={buttonDisabled}>
-                    <div className="SendingImg"/>
-                </button>
-            </div>
-        );
+        let input : any;
+        if(!this.props.receiver) {
+            this.Reset();
+            input = (
+                <div className={'SendingMessage'}>
+                    <input onKeyUp={this.EnterKeyPress} type='text' className='MessageInput' disabled={inputDisabled} onChange={this.handleInputChange} value={''} placeholder={placeholder}/>
+                    <button onClick={this.handleButtonClick} className='buttonDisabled' type='button' disabled={true}>
+                        <div className="SendingImg"/>
+                    </button>
+                </div>
+            );
+        }
+        else {
+            input = (
+                <div className={'SendingMessage'}>
+                    <input onKeyUp={this.EnterKeyPress} type='text' className='MessageInput' disabled={inputDisabled} onChange={this.handleInputChange} value={this.state.inputVal} placeholder={placeholder}/>
+                    <button onClick={this.handleButtonClick} className={btnClass} type='button' disabled={buttonDisabled}>
+                        <div className="SendingImg"/>
+                    </button>
+                </div>
+            );
+        }
+
+        return input;
     }
 }
 
 
 const mapPropsToState = (state : AppState, ownProps) => {
     return {
-        receiver : state.Receiver
+        receiver : state.Receiver,
+        logInState : state.LogInState
     }
 };
 

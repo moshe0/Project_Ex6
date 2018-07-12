@@ -1,9 +1,9 @@
 import * as React from "react";
 import Modal from "../containers/Modal";
 import {Link} from "react-router-dom";
-import StateStore from "../state/StateStore";
 import {setMany} from "../Redux/actions";
 import {store} from "../Redux/store";
+import MainHelpers from "../Helpers/MainHelpers";
 
 class LogOut extends React.Component<{}, {}> {
     constructor(props : {}){
@@ -11,6 +11,7 @@ class LogOut extends React.Component<{}, {}> {
     }
 
     Yes = () => {
+        MainHelpers.inputReset = 1;
         store.dispatch(setMany({
             'HoldReceiver': null,
             'currentUser': null,
@@ -23,7 +24,7 @@ class LogOut extends React.Component<{}, {}> {
     No = () => {
         store.dispatch(setMany({
             'ModalState': false,
-            'Receiver': StateStore.getInstance().get('HoldReceiver'),
+            'Receiver': store.getState()['HoldReceiver'],
             'HoldReceiver': null,
         }));
     };

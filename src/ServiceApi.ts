@@ -48,13 +48,13 @@ export function GetMessages(sender : any, receiver : any):Promise<any[]> {
 }
 
 
-export function AddMessage(message : any):Promise<void> {
+export function AddMessage(message : any):Promise<Response> {
     return fetch(basicUrl + '/messages/AddMessage', {
         method: 'POST',
         body: JSON.stringify(message),
         headers: {'content-type': 'application/json'}
     }).then((res) => {
-        return res.json();
+        return res;
     });
 }
 
