@@ -7,7 +7,6 @@ import {appService} from "../AppService";
 export function doLogin(user: {Name, Password}) {
     return async function(dispatch) {
         const LoginUser = await appService.GetSpecificUser(user.Name, user.Password);
-        console.log(LoginUser);
         if(!LoginUser) {
             dispatch(setMessageErr('There is no connection!'));
             return;

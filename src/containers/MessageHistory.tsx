@@ -21,33 +21,6 @@ class MessageHistory extends React.Component <IMessageHistoryProps, {}>{
         this.messagesBlock = React.createRef();
     }
 
-    //Before render when update happens
-    async componentWillUpdate (){
-        /*
-        console.log('>>>>>>>>>>>>  componentWillUpdate');
-        console.log('currentUser: ', store.getState()['currentUser']);
-        console.log('Receiver: ', store.getState()['Receiver']);
-        console.log('HoldReceiver: ', store.getState()['HoldReceiver']);
-
-
-        let index;
-        if(!!store.getState()['currentUser'])
-            index = InitTree.GetSelectedChildrenNames().find(item => item === store.getState()['currentUser'].Name);
-
-        if(!! store.getState()['currentUser'] && !! store.getState()['Receiver'] && !!index) {
-            const resMessages = await appService.GetMessages(store.getState()['currentUser'], store.getState()['Receiver']);
-            store.dispatch(setMessages(resMessages));
-
-        }
-        else if(!!store.getState()['HoldReceiver']  && !!index){
-            const resMessages = await appService.GetMessages(store.getState()['currentUser'], store.getState()['HoldReceiver']);
-            store.dispatch(setMessages(resMessages));
-        }
-        else
-            store.dispatch(setMessages([]));
-        */
-    }
-
     //After render
     componentDidMount(){
         this.messagesBlock.current.scrollTop = this.messagesBlock.current.scrollHeight;

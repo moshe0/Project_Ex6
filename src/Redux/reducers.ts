@@ -104,9 +104,6 @@ export function setMessages(state: AppState, messages: any[]) {
 }
 
 export function setMany(state: AppState, obj: any) {
-    const merge = {...state, ...obj};
-    console.log(merge);
-
     return {
         ...state,
         ...obj

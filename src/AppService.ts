@@ -21,7 +21,6 @@ export class AppService {
                 let user = new User(ObjUser.Id, "1", "1", 1);
                 return user;
             }
-            console.log(ObjUser);
             let user = new User(ObjUser.id, ObjUser.name, ObjUser.password, ObjUser.age);
             return user;
         }
@@ -34,9 +33,7 @@ export class AppService {
     async GetData() {
         try {
             const ObjGroups= await GetGroups();
-            console.log(ObjGroups);
             const ObjUsers = await GetUsers();
-            console.log(ObjUsers);
 
             let data : any[] = [];
             data = data.concat(ObjGroups);

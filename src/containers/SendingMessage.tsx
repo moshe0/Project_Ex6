@@ -51,7 +51,7 @@ class SendingMessage extends React.Component <ISendingMessageProps, ISendingMess
         }
     };
 
-    Reset = () =>{
+    componentDidUpdate(){
         if(MainHelpers.inputReset === 1) {
             MainHelpers.inputReset = 0;
             this.setState({
@@ -83,7 +83,6 @@ class SendingMessage extends React.Component <ISendingMessageProps, ISendingMess
 
         let input : any;
         if(!this.props.receiver) {
-            this.Reset();
             input = (
                 <div className={'SendingMessage'}>
                     <input onKeyUp={this.EnterKeyPress} type='text' className='MessageInput' disabled={inputDisabled} onChange={this.handleInputChange} value={''} placeholder={placeholder}/>
