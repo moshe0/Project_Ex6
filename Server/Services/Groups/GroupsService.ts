@@ -195,8 +195,14 @@ async function _FlatteningGroup(id: number, parentId : number) {
     let name = await DB.AnyQuery(DB.select('name',
         'groups',
         {field: 'id', value: id}));
+    let parentName = await DB.AnyQuery(DB.select('name',
+        'groups',
+        {field: 'id', value: parentId}));
+
+
     await DB.AnyQuery(DB.delete('groups', {field: 'id', value: id}));
     await DB.AnyQuery(DB.update('members', {field: 'host_id', value: id}, {field: 'host_id', value: parentId}));
+    await DB.AnyQuery(DB.update('messages', {field: 'receiver_id', value: id}, {field: 'receiver_name', value: parentName[0].name},{field: 'receiver_id', value: parentId}));
     return `succeeded! group '${name[0].name}' flatted`;
 }
 

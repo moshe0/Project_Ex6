@@ -175,8 +175,10 @@ exports.FlatteningGroup = FlatteningGroup;
 function _FlatteningGroup(id, parentId) {
     return __awaiter(this, void 0, void 0, function* () {
         let name = yield DB_1.DB.AnyQuery(DB_1.DB.select('name', 'groups', { field: 'id', value: id }));
+        let parentName = yield DB_1.DB.AnyQuery(DB_1.DB.select('name', 'groups', { field: 'id', value: parentId }));
         yield DB_1.DB.AnyQuery(DB_1.DB.delete('groups', { field: 'id', value: id }));
         yield DB_1.DB.AnyQuery(DB_1.DB.update('members', { field: 'host_id', value: id }, { field: 'host_id', value: parentId }));
+        yield DB_1.DB.AnyQuery(DB_1.DB.update('messages', { field: 'receiver_id', value: id }, { field: 'receiver_name', value: parentName[0].name }, { field: 'receiver_id', value: parentId }));
         return `succeeded! group '${name[0].name}' flatted`;
     });
 }
