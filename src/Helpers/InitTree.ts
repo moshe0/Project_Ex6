@@ -2,7 +2,8 @@ import * as $ from "jquery";
 import {TreeSelectedItem} from "../Models/TreeSelectedItem";
 import MainHelpers from "./MainHelpers";
 import {store} from "../Redux/store";
-import {setReceiver} from "../Redux/actions";
+import {setMessages, setReceiver} from "../Redux/actions";
+import {appService} from "../AppService";
 
 
 export class InitTree {
@@ -104,9 +105,25 @@ export class InitTree {
         InitTree.inFocusChanged();
     }
 
-    static inFocusChanged() {
+    static async inFocusChanged() {
         let Receiver = InitTree.getItemFromPath(InitTree.SelectedArrayPath(), store.getState()['Data'], 0);
         store.dispatch(setReceiver(Receiver));
+
+
+
+
+
+
+        let index;
+        if(!!store.getState()['currentUser'])
+            index = InitTree.GetSelectedChildrenNames().find(item => item === store.getState()['currentUser'].Name);
+
+        if(!! store.getState()['currentUser'] && !! store.getState()['Receiver'] && !!index) {
+            const resMessages = await appService.GetMessages(store.getState()['currentUser'], store.getState()['Receiver']);
+            store.dispatch(setMessages(resMessages));
+        }
+        else
+            store.dispatch(setMessages([]));
     }
 
     static clearFocusClass() {

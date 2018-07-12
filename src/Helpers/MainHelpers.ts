@@ -1,6 +1,8 @@
 import * as io from 'socket.io-client';
 import StateStore from "../state/StateStore";
 import {store} from "../Redux/store";
+import {appService} from "../AppService";
+import {setMessages} from "../Redux/actions";
 
 
 class MainHelpers {
@@ -24,10 +26,11 @@ class MainHelpers {
     }
 }
 
-MainHelpers.socket.on('chat', (names) => {
+MainHelpers.socket.on('chat', async(names) => {
     let index = names.find(item => item === store.getState()['currentUser'].Name);
     if(!! index) {
-        StateStore.getInstance().onStoreChanged();
+        const resMessages = await appService.GetMessages(store.getState()['currentUser'], store.getState()['Receiver']);
+        store.dispatch(setMessages(resMessages));
     }
 });
 

@@ -59,11 +59,12 @@ class TreeActions extends React.Component<ITreeActionsProps, {}> {
             if(!IsCurrentUserSelected) {
                 store.dispatch(setMany({
                     'Data': await appService.GetData(),
-                    'TreeSelected': null
+                    'TreeSelected': null,
+                    'Messages' : []
                 }));
                 store.dispatch(setAllTree(null));
             }
-            else{
+            else{ //currentUser deleted
 
                 store.dispatch(setMany({
                     'Receiver': null,
@@ -72,6 +73,7 @@ class TreeActions extends React.Component<ITreeActionsProps, {}> {
                     'currentUser': null,
                     'Data' : [],
                     'LogInState': true,
+                    'Messages' : []
                 }));
                 // store.dispatch(setMany({
                 //     'Data' : [],
@@ -105,7 +107,8 @@ class TreeActions extends React.Component<ITreeActionsProps, {}> {
             MainHelpers.FirstUse = 1;
             store.dispatch(setMany({
                 'Data' : await appService.GetData(),
-                'TreeSelected' : null
+                'TreeSelected' : null,
+                'Messages' : []
             }));
             store.dispatch(setAllTree(null));
         }

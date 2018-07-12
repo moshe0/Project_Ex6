@@ -16,6 +16,7 @@ class LogOut extends React.Component<{}, {}> {
             'currentUser': null,
             'Data' : [],
             'LogInState': true,
+            'Messages' : []
         }));
     };
 

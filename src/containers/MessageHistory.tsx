@@ -9,8 +9,7 @@ import {setMessages} from "../Redux/actions";
 
 
 interface IMessageHistoryProps {
-    receiver : any,
-    holdReceiver : any
+    messages : any[]
 }
 
 class MessageHistory extends React.Component <IMessageHistoryProps, {}>{
@@ -24,6 +23,7 @@ class MessageHistory extends React.Component <IMessageHistoryProps, {}>{
 
     //Before render when update happens
     async componentWillUpdate (){
+        /*
         console.log('>>>>>>>>>>>>  componentWillUpdate');
         console.log('currentUser: ', store.getState()['currentUser']);
         console.log('Receiver: ', store.getState()['Receiver']);
@@ -45,6 +45,7 @@ class MessageHistory extends React.Component <IMessageHistoryProps, {}>{
         }
         else
             store.dispatch(setMessages([]));
+        */
     }
 
     //After render
@@ -58,8 +59,6 @@ class MessageHistory extends React.Component <IMessageHistoryProps, {}>{
     }
 
     public render() {
-        console.log('>>>>>>>>>>>>>>>>>>>>>', store.getState()['Messages']);
-
         if(!store.getState()['currentUser']){
             return (
                 <div className="content" ref={this.messagesBlock}/>
@@ -109,8 +108,7 @@ class MessageHistory extends React.Component <IMessageHistoryProps, {}>{
 
 const mapPropsToState = (state : AppState, ownProps) => {
     return {
-         receiver : state.Receiver,
-        holdReceiver : state.HoldReceiver
+        messages : state.Messages
     }
 };
 
