@@ -111,7 +111,7 @@ input:focus, textarea:focus, select:focus, button:focus {
     background: url("Images/sendingMessage.png");
     width: 24px;
     height: 24px;
-    margin-left: 18px;
+    margin-left: 19px;
 }
 
 .buttonActive:hover {
@@ -229,13 +229,13 @@ div.LoginImage:active{
     margin: 0;
     list-style: none;
     outline: none;
-    height: 87.9%;
+    height: 87.4%;
     overflow-y: scroll;
 }
 
 .ActionTree{
-    height: 9.3%;
-    vertical-align: bottom;
+    height: 9.6%;
+    vertical-align: center;
     padding-left: 1px;
     padding-right: 60px;
     background-color: #617e63;
@@ -271,7 +271,7 @@ li{
 .TreeActionsImages{
     width: 40px;
     height: 40px;
-    margin: 8px;
+    margin: 6px;
     float: right;
     cursor: pointer;
 }
