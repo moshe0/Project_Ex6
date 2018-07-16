@@ -1,14 +1,15 @@
 #*****************  USERS *********************************
+use chat;
 
 DROP TABLE users, groups, members, messages;
 
 CREATE TABLE `users` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `name` varchar(45) NOT NULL,
-  `password` varchar(45) NOT NULL,
-  `age` int(11) NOT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `id_UNIQUE` (`id`)
+`id` int(11) NOT NULL AUTO_INCREMENT,
+`name` varchar(45) NOT NULL,
+`password` varchar(45) NOT NULL,
+`age` int(11) NOT NULL,
+              PRIMARY KEY (`id`),
+UNIQUE KEY `id_UNIQUE` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
 INSERT INTO users
@@ -28,23 +29,33 @@ VALUES
 
 
 
-CREATE TABLE `groups` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `name` varchar(45) NOT NULL,
-  `parent_id` varchar(45) DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `id_UNIQUE` (`id`)
+ CREATE TABLE `groups` (
+`id` int(11) NOT NULL AUTO_INCREMENT,
+`name` varchar(45) NOT NULL,
+`parent_id` varchar(45) DEFAULT NULL,
+                        PRIMARY KEY (`id`),
+UNIQUE KEY `id_UNIQUE` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1000000 DEFAULT CHARSET=utf8;
+
 
 INSERT INTO groups
 (name, parent_id)
 VALUES
-('No Friends', null),
+('Coffe', null),
 ('Friends', null),
 ('Best Friends', 1000001),
-('Good Friends', 1000002),
-('AAA', 1000000),
-('BBB', 1000000);
+('Good Friends', 1000001),
+('Room1', 1000000),
+('Room2', 1000000),
+('Work', 1000002),
+('Neighborhood', 1000002),
+('Work', 1000003),
+('Neighborhood', 1000003),
+('E2', 1000006),
+('F2', 1000006),
+('E3', 1000010);
+
+
 
 
 
@@ -55,16 +66,16 @@ VALUES
 
 
 
-CREATE TABLE `messages` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `content` varchar(45) NOT NULL,
-  `sender_name` varchar(45) NOT NULL,
-  `receiver_name` varchar(45) NOT NULL,
-  `sender_id` int(11) NOT NULL,
-  `receiver_id` int(11) NOT NULL,
-  `time_sent` varchar(45) NOT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `id_UNIQUE` (`id`)
+ CREATE TABLE `messages` (
+`id` int(11) NOT NULL AUTO_INCREMENT,
+`content` varchar(45) NOT NULL,
+`sender_name` varchar(45) NOT NULL,
+`receiver_name` varchar(45) NOT NULL,
+`sender_id` int(11) NOT NULL,
+`receiver_id` int(11) NOT NULL,
+`time_sent` varchar(45) NOT NULL,
+                        PRIMARY KEY (`id`),
+UNIQUE KEY `id_UNIQUE` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
 
@@ -84,19 +95,19 @@ VALUES
 
 
 
-CREATE TABLE `members` (
-  `host_id` varchar(50) NOT NULL,
-  `user_id` varchar(50) NOT NULL
+ CREATE TABLE `members` (
+`host_id` varchar(50) NOT NULL,
+`user_id` varchar(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
 INSERT INTO members
 (host_id, user_id)
 VALUES
-(1000003, 1),
-(1000003, 4),
-(1000003, 5),
-(1000003, 7);
+(1000012, 1),
+(1000012, 4),
+(1000012, 5),
+(1000012, 7);
 
 
 
@@ -121,11 +132,4 @@ from members;
 # ('Best Friends', 1000001),
 # ('Good Friends', 1000002),
 # ('AAA', 1000000),
-# ('BBB', 1000000),
-# ('CC', 1000003),
-# ('DD', 1000003),
-# ('EE', 1000007),
-# ('FF', 1000007),
-# ('E2', 1000006),
-# ('F2', 1000006),
-# ('E3', 1000010);
+# ('BBB', 1000000);
