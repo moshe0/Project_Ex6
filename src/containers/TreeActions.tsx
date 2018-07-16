@@ -7,6 +7,7 @@ import {store} from "../Redux/store";
 import {setAllTree, setMany} from "../Redux/actions";
 import {AppState} from "../Redux/AppState";
 import {connect} from "react-redux";
+import {toast, Zoom} from "react-toastify";
 
 
 
@@ -77,7 +78,13 @@ class TreeActions extends React.Component<ITreeActionsProps, {}> {
                 }));
             }
         }
-        alert(MessageRes);
+        toast.success(MessageRes, {
+            position: toast.POSITION.TOP_CENTER,
+            autoClose: 2000,
+            hideProgressBar: true,
+            pauseOnHover: true,
+            transition: Zoom
+        });
     };
 
 
@@ -100,7 +107,13 @@ class TreeActions extends React.Component<ITreeActionsProps, {}> {
             }));
             store.dispatch(setAllTree(null));
         }
-        alert(MessageRes);
+        toast.success(MessageRes, {
+            position: toast.POSITION.TOP_CENTER,
+            autoClose: 2000,
+            hideProgressBar: true,
+            pauseOnHover: true,
+            transition: Zoom
+        });
     };
 
     public render() {

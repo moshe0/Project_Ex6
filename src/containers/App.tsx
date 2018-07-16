@@ -11,6 +11,9 @@ import {AppState} from "../Redux/AppState";
 import {connect} from "react-redux";
 import {doChangeErr, doLogin} from "../Redux/actions";
 import {store} from "../Redux/store";
+import { ToastContainer, toast, Zoom } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 
 interface IAppProps {
     doLogin(userName: string, password: string): void,
@@ -118,6 +121,7 @@ class App extends React.Component<IAppProps, IAppState> {
                     </Switch>
                     <Header currentUser={store.getState()['currentUser']}/>
                     <Main/>
+                    <ToastContainer/>
                 </div>
             </BrowserRouter>
         );
