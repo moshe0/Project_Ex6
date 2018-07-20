@@ -4,12 +4,12 @@ use chat;
 DROP TABLE users, groups, members, messages;
 
 CREATE TABLE `users` (
-`id` int(11) NOT NULL AUTO_INCREMENT,
-`name` varchar(45) NOT NULL,
-`password` varchar(45) NOT NULL,
-`age` int(11) NOT NULL,
-              PRIMARY KEY (`id`),
-UNIQUE KEY `id_UNIQUE` (`id`)
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(45) NOT NULL,
+  `password` varchar(45) NOT NULL,
+  `age` int(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `id_UNIQUE` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
 INSERT INTO users
@@ -29,12 +29,12 @@ VALUES
 
 
 
- CREATE TABLE `groups` (
-`id` int(11) NOT NULL AUTO_INCREMENT,
-`name` varchar(45) NOT NULL,
-`parent_id` varchar(45) DEFAULT NULL,
-                        PRIMARY KEY (`id`),
-UNIQUE KEY `id_UNIQUE` (`id`)
+CREATE TABLE `groups` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(45) NOT NULL,
+  `parent_id` varchar(45) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `id_UNIQUE` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1000000 DEFAULT CHARSET=utf8;
 
 
@@ -53,7 +53,7 @@ VALUES
 ('Neighborhood', 1000003),
 ('E2', 1000006),
 ('F2', 1000006),
-('E3', 1000010);
+('E3', 1000004);
 
 
 
@@ -66,16 +66,16 @@ VALUES
 
 
 
- CREATE TABLE `messages` (
-`id` int(11) NOT NULL AUTO_INCREMENT,
-`content` varchar(45) NOT NULL,
-`sender_name` varchar(45) NOT NULL,
-`receiver_name` varchar(45) NOT NULL,
-`sender_id` int(11) NOT NULL,
-`receiver_id` int(11) NOT NULL,
-`time_sent` varchar(45) NOT NULL,
-                        PRIMARY KEY (`id`),
-UNIQUE KEY `id_UNIQUE` (`id`)
+CREATE TABLE `messages` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `content` varchar(45) NOT NULL,
+  `sender_name` varchar(45) NOT NULL,
+  `receiver_name` varchar(45) NOT NULL,
+  `sender_id` int(11) NOT NULL,
+  `receiver_id` int(11) NOT NULL,
+  `time_sent` varchar(45) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `id_UNIQUE` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
 
@@ -83,9 +83,9 @@ UNIQUE KEY `id_UNIQUE` (`id`)
 INSERT INTO messages
 (content, sender_name, receiver_name, sender_id, receiver_id, time_sent)
 VALUES
-('שלום לכולם', 'Moshe', 'Good Friends', 1, 1000003, '7:58:06'),
-('שלום זה אודי', 'Udi', 'Good Friends', 5, 1000003, '7:59:22'),
-('ואני טומי', 'Tommy', 'Good Friends', 4, 1000003, '8:00:28'),
+('שלום לכולם', 'Moshe', 'Good Friends', 1, 1000012, '7:58:06'),
+('שלום זה אודי', 'Udi', 'Good Friends', 5, 1000012, '7:59:22'),
+('ואני טומי', 'Tommy', 'Good Friends', 4, 1000012, '8:00:28'),
 ('הגשת את התרגיל', 'Moshe', 'Raz', 1, 2, '8:00:53'),
 ('אני כבר מגיש', 'Raz', 'Moshe', 2, 1, '8:01:12');
 
@@ -95,9 +95,9 @@ VALUES
 
 
 
- CREATE TABLE `members` (
-`host_id` varchar(50) NOT NULL,
-`user_id` varchar(50) NOT NULL
+CREATE TABLE `members` (
+  `host_id` varchar(50) NOT NULL,
+  `user_id` varchar(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 

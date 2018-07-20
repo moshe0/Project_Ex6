@@ -31,6 +31,8 @@ html, body, .bodyClass, #root {
     width: 25%;
     border-right: 1px solid black;
     background-color: #84a386;
+    display: flex;
+    flex-direction: column;
 }
 
 .right {
@@ -229,15 +231,20 @@ div.LoginImage:active{
     margin: 0;
     list-style: none;
     outline: none;
-    height: 87.4%;
+    flex-grow: 1;
     overflow-y: scroll;
 }
 
 .ActionTree{
-    height: 9.8%;
-    vertical-align: center;
-    padding-left: 1px;
-    padding-right: 60px;
+    box-sizing: border-box;
+    height: 54px;
+    min-height: 54px;
+    max-height: 54px;
+    padding: 7px;
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: center;
+    flex-direction: row-reverse;
     background-color: #617e63;
 }
 
@@ -271,8 +278,7 @@ li{
 .TreeActionsImages{
     width: 40px;
     height: 40px;
-    margin: 6px;
-    float: right;
+    margin-left: 12px;
     cursor: pointer;
 }
 
