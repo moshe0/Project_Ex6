@@ -250,8 +250,8 @@ class Add extends React.Component<IAddProps, IAddState> {
                 {divSelected}
                 <p>
                     <Route path='/Add' render={this.AddRender}/>
-                    <Link to='/Add' style={styles.Link}><button style={this.state.canAdd ? styles.button : styles.buttonDisabled} disabled={!this.state.canAdd} onClick={this.Add}>Add</button></Link>
-                    <Link to='/' style={styles.Link}><button style={styles.buttonCancel} onClick={this.Cancel}>Cancel</button></Link>
+                    <Link to='/Add' style={styles.Link}><button className={this.state.canAdd ? 'okButton' : 'okButtonDisabled'} disabled={!this.state.canAdd} onClick={this.Add}>Add</button></Link>
+                    <Link to='/' style={styles.Link}><button className={'notOkButton buttonBig'} onClick={this.Cancel}>Cancel</button></Link>
                 </p>
                 <p>
                     <label style={styles.inputErr}>{this.state.MessageResolve}</label>
@@ -293,30 +293,6 @@ const styles: { [key: string]: React.CSSProperties } = {
         color : 'red',
         borderRadius: '5px',
     },
-    button: {
-        border: '1px solid rgb(0, 119, 158)',
-        background: '#b8e0ee',
-        color: '#00779e',
-        fontSize: '20px',
-        cursor: 'pointer',
-        borderRadius: '5px',
-    },
-    buttonCancel: {
-        border: '1px solid rgb(111, 69, 31)',
-        background: '#edd29f',
-        color: '#6f451f',
-        fontSize: '20px',
-        cursor: 'pointer',
-        borderRadius: '5px',
-    },
-};
-
-styles.buttonDisabled = {
-    background: '#DDDDDD',
-    color: '#444753',
-    fontSize: '20px',
-    cursor: 'pointer',
-    borderRadius: '5px'
 };
 
 

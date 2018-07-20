@@ -56,7 +56,7 @@ input, button{
 }
 
 button{
-    margin-right: 3px;
+    margin-right: 7px;
 }
 
 input, textarea, select, button {
@@ -67,7 +67,7 @@ input, textarea, select, button {
     border: 1px solid #DDDDDD;
 }
 
-input:focus, textarea:focus, select:focus, button:focus {
+input:focus, textarea:focus, select:focus{
     box-shadow: 0 0 5px rgb(94, 151, 238);
     border: 1px solid rgb(94, 151, 238);
 }
@@ -93,7 +93,6 @@ input:focus, textarea:focus, select:focus, button:focus {
     font-size: 25px;
     min-width: 75px;
     color: white;
-    border-color: white;
 }
 
 
@@ -106,7 +105,6 @@ input:focus, textarea:focus, select:focus, button:focus {
     font-size: 25px;
     min-width: 75px;
     color: white;
-    border-color: white;
 }
 
 .SendingImg{
@@ -356,3 +354,98 @@ div.FlatteningImage:active{
 
 
 /***********************************************/
+
+
+
+.okButton{
+    box-sizing: border-box;
+    border: 1px solid #00779e;
+    background: #b8e0ee;
+    color: #00779e;
+    font-size: 20px;
+    cursor: pointer;
+    border-radius: 5px;
+    width: 60px;
+    height: 35px;
+}
+
+.okButton:hover{
+    background: #a4ccda;
+}
+
+.okButton:active{
+    border: 2px solid #00779e;
+}
+
+
+.notOkButton{
+    box-sizing: border-box;
+    border: 1px solid #6f451f;
+    background: #edd29f;
+    color: #6f451f;
+    font-size: 20px;
+    cursor: pointer;
+    border-radius: 5px;
+    width: 60px;
+    height: 35px;
+}
+
+.notOkButton:hover{
+    background: #d9be8d;
+}
+
+.notOkButton:active{
+    border: 2px solid #6f451f;
+}
+
+
+.okButtonDisabled {
+    box-sizing: border-box;
+    border: 1px solid #cacaca;
+    background: #DDDDDD;
+    color: #444753;
+    font-size: 20px;
+    border-radius: 5px;
+    width: 60px;
+    height: 35px;
+}
+
+.buttonBig{
+    width: 85px;
+}
+
+
+
+.buttonLogin{
+    border: 1px solid #000000;
+    width: 100%;
+    height: 35px;
+    outline: none;
+    color: white;
+    background: #2b669a;
+    box-sizing: border-box;
+    font-size: 20px;
+    border-radius: 3px;
+}
+
+.buttonLogin:hover{
+    background: #2e87bf;
+}
+
+.buttonLogin:active{
+    background: #30a4e1;
+}
+
+
+.buttonLoginDisabled {
+    width: 100%;
+    height: 35px;
+    outline: none;
+    color: #444753;
+    background: #DDDDDD;
+    box-sizing: border-box;
+    border: 1px solid #cacaca;
+    font-size: 20px;
+    border-radius: 3px;
+}
+

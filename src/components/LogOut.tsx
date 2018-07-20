@@ -35,8 +35,8 @@ class LogOut extends React.Component<{}, {}> {
                 <p style={styles.p}>
                     Do you want to logout?
                 </p>
-                <button style={styles.button} onClick={this.Yes}>Yes</button>
-                <Link to='/' style={styles.Link}><button style={styles.buttonCancel} onClick={this.No}>No</button></Link>
+                <button className={'okButton'} onClick={this.Yes}>Yes</button>
+                <Link to='/'><button className={'notOkButton'} onClick={this.No}>No</button></Link>
             </Modal>
         );
     }
@@ -63,22 +63,6 @@ const styles: { [key: string]: React.CSSProperties } = {
         width: "100%",
         outline: 'none',
         fontSize: '20px',
-        borderRadius: '5px',
-    },
-    button: {
-        border: '1px solid rgb(0, 119, 158)',
-        background: '#b8e0ee',
-        color: '#00779e',
-        fontSize: '20px',
-        cursor: 'pointer',
-        borderRadius: '5px',
-    },
-    buttonCancel: {
-        border: '1px solid rgb(111, 69, 31)',
-        background: '#edd29f',
-        color: '#6f451f',
-        fontSize: '20px',
-        cursor: 'pointer',
         borderRadius: '5px',
     },
 };

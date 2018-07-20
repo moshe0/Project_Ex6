@@ -101,8 +101,8 @@ class UpdateUser extends React.Component<{}, IUpdateState> {
                     </p>
                 </div>
                 <Route path='/UpdateUser' render={this.UpdateRender}/>
-                <Link to='/UpdateUser' style={styles.Link}><button style={this.state.canUpdate ? styles.button : styles.buttonDisabled} disabled={!this.state.canUpdate} onClick={this.Update}>Update</button></Link>
-                <Link to='/' style={styles.Link}><button style={styles.buttonCancel} onClick={this.Cancel}>Cancel</button></Link>
+                <Link to='/UpdateUser' style={styles.Link}><button className={this.state.canUpdate ? 'okButton buttonBig' : 'okButtonDisabled buttonBig'} disabled={!this.state.canUpdate} onClick={this.Update}>Update</button></Link>
+                <Link to='/' style={styles.Link}><button className={'notOkButton buttonBig'} onClick={this.Cancel}>Cancel</button></Link>
             </Modal>
         );
     }
@@ -134,30 +134,6 @@ const styles: { [key: string]: React.CSSProperties } = {
     inputName: {
         fontWeight : "bold"
     },
-    button: {
-        border: '1px solid rgb(0, 119, 158)',
-        background: '#b8e0ee',
-        color: '#00779e',
-        fontSize: '20px',
-        cursor: 'pointer',
-        borderRadius: '5px',
-    },
-    buttonCancel: {
-        border: '1px solid rgb(111, 69, 31)',
-        background: '#edd29f',
-        color: '#6f451f',
-        fontSize: '20px',
-        cursor: 'pointer',
-        borderRadius: '5px',
-    },
-};
-
-styles.buttonDisabled = {
-    background: '#DDDDDD',
-    color: '#444753',
-    fontSize: '20px',
-    cursor: 'pointer',
-    borderRadius: '5px'
 };
 
 
